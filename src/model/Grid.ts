@@ -11,10 +11,12 @@ import { Coordinate } from '../Types'
  *  ...
  */
 
-export default class Grid {
+let currentGridId = 0
 
-  private constructor(private readonly grid: Array<Cell[]> = []) {
+export default class Grid {
+  private constructor(private readonly grid: Array<Cell[]> = [], id: number = null) {
     this.isWithinBounds = this.isWithinBounds.bind(this)
+    this.id = id || currentGridId++
   }
 
   get length() {
@@ -29,7 +31,7 @@ export default class Grid {
 
   get(x: number, y: number): Cell {
     const column = this.getColumn(x)
-    const cell = column[y]
+    const cell = column[ y ]
     if (!cell) {
       throw Error(`no cell located at (${x}, ${y})`)
     }
@@ -38,7 +40,15 @@ export default class Grid {
 
   set(cell: Cell) {
     const column = this.getColumn(cell.x)
-    column[cell.y] = cell
+    column[ cell.y ] = cell
+  }
+
+  toggleCell(x: number, y: number) {
+    const cell = this.get(x, y)
+    const nextStatus = cell.status === Status.Alive
+      ? Status.Dead : Status.Alive
+    this.set(cell.copy(nextStatus))
+    return nextStatus
   }
 
   forEach(predicate: (cell: Cell) => void) {
@@ -58,21 +68,25 @@ export default class Grid {
     const { x, y } = cell
     const candidates = [
       [ x - 1, y - 1 ], // upper left
-      [ x,     y - 1 ], // upper center
+      [ x, y - 1 ], // upper center
       [ x + 1, y - 1 ], // upper right
-      [ x - 1, y     ], // center left
-      [ x + 1, y     ], // center right
+      [ x - 1, y ], // center left
+      [ x + 1, y ], // center right
       [ x - 1, y + 1 ], // lower left
-      [ x,     y + 1 ], // lower center
-      [ x + 1, y + 1 ], // lower right
+      [ x, y + 1 ], // lower center
+      [ x + 1, y + 1 ] // lower right
     ]
     return candidates
       .filter(this.isWithinBounds)
-      .map(([x, y]) => this.get(x, y))
+      .map(([ x, y ]) => this.get(x, y))
+  }
+
+  get copy() {
+    return new Grid(this.grid, this.id)
   }
 
   private getColumn(index: number): Cell[] {
-    const column = this.grid[index]
+    const column = this.grid[ index ]
     if (!column) {
       throw Error(`no column indexed at ${index}`)
     }
@@ -80,8 +94,8 @@ export default class Grid {
   }
 
   private isWithinBounds([ x, y ]: Coordinate): boolean {
-    const column = this.grid[x]
-    return column && (column[y] instanceof Cell) || false
+    const column = this.grid[ x ]
+    return column && (column[ y ] instanceof Cell) || false
   }
 
   static createWithLength(length: number, pattern?: Pattern) {
@@ -96,4 +110,10 @@ export default class Grid {
     }
     return grid
   }
+
+  static resetIdCounter() {
+    currentGridId = 0
+  }
+
+  readonly id: number
 }

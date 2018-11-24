@@ -5,7 +5,7 @@ const webpack = require('webpack')
 const bundlePath = path.resolve(__dirname, 'dist/')
 
 module.exports = {
-  entry: './src/index.ts',
+  entry: './src/index.tsx',
   output: {
     publicPath: bundlePath,
     filename: 'bundle.js'
@@ -18,7 +18,7 @@ module.exports = {
       { enforce: 'pre', test: /\.js$/, loader: 'source-map-loader' },
       {
         test: /\.scss$/,
-        // use: [ 'style-loader', 'css-loader', 'sass-loader' ]
+        use: [ 'style-loader', 'css-loader' ]
       }
     ]
   },

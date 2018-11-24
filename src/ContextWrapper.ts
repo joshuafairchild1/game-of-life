@@ -15,15 +15,14 @@ export default class ContextWrapper {
     context.closePath()
   }
 
-  draw(startX: number, startY: number, endX: number, endY: number) {
+  draw = (startX: number, startY: number, endX: number, endY: number) => {
     const { context } = this
     context.moveTo(startX, startY)
     context.lineTo(endX, endY)
     context.stroke()
-    return this
   }
 
-  fillSquare(posX: number, posY: number, length: number, color?: string) {
+  fillSquare = (posX: number, posY: number, length: number, color?: string) => {
     const { context } = this
     const originalColor = context.fillStyle
     if (color) {
@@ -33,11 +32,9 @@ export default class ContextWrapper {
     if (color) {
       context.fillStyle = originalColor
     }
-    return this
   }
 
   clear(canvasLength: number) {
     this.context.clearRect(0, 0, canvasLength, canvasLength)
-    return this
   }
 }

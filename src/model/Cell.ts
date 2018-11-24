@@ -23,7 +23,7 @@ export default class Cell {
     return `(${this.x}, ${this.y}) [${this.status}]`
   }
 
-  copy(state = this.status) {
-    return new Cell(this.x, this.y, state)
+  copy(status = this.status) {
+    return new Cell(this.x, this.y, status)
   }
 }
