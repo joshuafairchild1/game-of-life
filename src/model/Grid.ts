@@ -14,9 +14,9 @@ import { Coordinate } from '../Types'
 let currentGridId = 0
 
 export default class Grid {
-  private constructor(private readonly grid: Array<Cell[]> = [], id: number = null) {
+  private constructor(private readonly grid: Array<Cell[]> = [], id?: number) {
     this.isWithinBounds = this.isWithinBounds.bind(this)
-    this.id = id || currentGridId++
+    this.id = id === undefined ? currentGridId++ : id
   }
 
   get length() {
@@ -112,7 +112,7 @@ export default class Grid {
   }
 
   static resetIdCounter() {
-    currentGridId = 0
+    currentGridId = 1
   }
 
   readonly id: number

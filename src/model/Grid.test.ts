@@ -1,5 +1,4 @@
 'use strict'
-
 import 'mocha'
 import { assert } from 'chai'
 import Cell, { Status } from './Cell'
@@ -51,6 +50,15 @@ describe('Grid', function() {
       neighbors,
       [ upperLeft, upperCenter, ...others, lowerRight ]
     )
+  })
+
+  it('toggleCell', function () {
+    const cell = new Cell(0, 0, Status.Alive)
+    uut.set(cell)
+    uut.toggleCell(cell.x, cell.y)
+    assert.isTrue(uut.get(cell.x, cell.y).status === Status.Dead)
+    uut.toggleCell(cell.x, cell.y)
+    assert.isTrue(uut.get(cell.x, cell.y).status === Status.Alive)
   })
 
 })

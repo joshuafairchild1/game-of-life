@@ -10,6 +10,7 @@ import Grid from '../../model/Grid'
 import useGame from './useGame'
 
 import { Rules } from '../../Types'
+import Pattern from '../../model/Pattern'
 
 type Props = {
   grid: Grid,
@@ -18,7 +19,8 @@ type Props = {
 }
 
 const GameSubscriber: React.FC<Props> = props => {
-  const game = useGame(props.grid, props.rules, props.interval)
+  const game = useGame(
+    new Pattern('Empty', []), 10,  props.rules, props.interval)
   return <span>{game.current}</span>
 }
 

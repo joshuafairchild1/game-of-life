@@ -7,3 +7,28 @@ canvas#canvas {
   margin: auto;
   display: block;
 }
+
+div.controls {
+  position: absolute;
+  border: solid 3px black;
+  border-radius: 5%;
+  background-color: #b8c0c7;
+  padding: 1em;
+  width: 15vw;
+
+  button.control-icon {
+    margin: .1em;
+  }
+
+  div.control-generations {
+    margin: .5em 0;
+    label {
+      font-size: small;
+      margin-right: .5em;
+    }
+    input {
+      width: 4em;
+    }
+  }
+
+}

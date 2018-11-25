@@ -4,8 +4,10 @@
 # User-specific stuff
 .idea/**/workspace.xml
 .idea/**/tasks.xml
+.idea/codeStyles
 .idea/**/dictionaries
 .idea/**/shelf
+.idea/misc.xml
 
 # Sensitive or high-churn files
 .idea/**/dataSources/
@@ -35,3 +37,4 @@ fabric.properties
 .DS_Store
 .env
 dist
+package-lock.json

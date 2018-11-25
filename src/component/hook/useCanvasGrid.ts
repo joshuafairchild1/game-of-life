@@ -14,8 +14,9 @@ export default function useCanvasGrid(grid: Grid, config: CanvasConfig) {
   useMutationEffect(drawGrid)
 
   function drawGrid() {
+    // const start = Date.now()
     withContext(context => {
-      console.log('drawing grid generation', grid.id)
+      // console.log('drawing grid generation', grid.id)
       context.clear(canvasLength)
       context.withPath(() => {
         context.fillSquare(0, 0, canvasLength, BACKGROUND)
@@ -32,6 +33,7 @@ export default function useCanvasGrid(grid: Grid, config: CanvasConfig) {
         context.draw(0, canvasLength, canvasLength, canvasLength)
       })
     })
+    // console.debug('rendering grid took', Date.now() - start, 'ms')
   }
 
   function drawLines(position: number) {

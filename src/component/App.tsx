@@ -1,30 +1,45 @@
 import * as React from 'react'
 import CanvasGrid from './CanvasGrid'
 import ControlPanel from './ControlPanel'
-import Grid from '../model/Grid'
 import CanvasConfig from '../model/CanvasConfig'
 import useGame from './hook/useGame'
 import { Rules } from '../Types'
 
+import { library } from '@fortawesome/fontawesome-svg-core'
+import {
+  faRedo, faPause, faPlay, faStepForward, faStepBackward
+} from '@fortawesome/free-solid-svg-icons'
+import Pattern from '../model/Pattern'
+
+library.add(faRedo, faPause, faPlay, faStepForward, faStepBackward)
+
 type Props = {
   rules: Rules
-  grid: Grid
+  presetPatterns: Pattern[]
+  initialPattern: Pattern
   configuration: CanvasConfig
   interval: number
 }
 
 const App: React.FC<Props> = (props: Props) => {
-  const game = useGame(props.grid, props.rules, props.interval)
+  const { configuration } = props
+  const game = useGame(
+    props.initialPattern, configuration.cellCount, props.rules, props.interval)
   return <div>
     <ControlPanel
-      isFirstGeneration={game.generationIndex === 0}
+      changePattern={game.changePattern}
+      patternOptions={props.presetPatterns}
+      selectedPattern={game.pattern}
+      generationIndex={game.generationIndex()}
       isPaused={!game.isRunning()}
       reset={game.reset}
       pause={game.pause}
       resume={game.resume}
-      move={game.moveGeneration}/>
+      step={game.stepCurrentGeneration}
+      interval={game.renderInterval}
+      setRenderInterval={game.setRenderInterval}/>
     <CanvasGrid
-      config={props.configuration}
+      config={configuration}
       grid={game.current}
       onCellClick={game.cellClicked}/>
   </div>

@@ -1,43 +1,56 @@
 import Grid from '../../model/Grid'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import useGenerations from './useGenerations'
 import { Rules } from '../../Types'
+import useInterval from './useInterval'
+import Pattern from '../../model/Pattern'
+import Direction from '../../Direction'
 
-export enum Direction { Forward, Backward }
-
-export default function useGame(initial: Grid, rules: Rules, interval: number) {
+export default function useGame(
+  initial: Pattern, cellCount: number, rules: Rules, initialInterval: number
+) {
+  const gridOf = (pattern: Pattern) => Grid.createWithLength(cellCount, pattern)
+  const [ pattern, setPattern ] = useState(initial)
   const [ timeout, setRenderTimeout ] = useState<any | null>(null)
   const {
+    current: renderInterval, previous: lastRenderInterval, setIntervalState
+  } = useInterval(initialInterval)
+  const {
     currentGeneration: { current, ref }, setCurrent,
-    generations, add, clear
-  } = useGenerations(initial)
+    generations, addGeneration, setGenerations, resetGenerations
+  } = useGenerations(gridOf(pattern))
 
-  function generationIndex() {
-    return generations.findIndex(it => it.id === current.id)
-  }
+  useEffect(() => {
+    // if the interval changes, the next generation must be rescheduled
+    // to start generations on the new interval
+    if (renderInterval !== lastRenderInterval && isRunning()) {
+      _scheduleNextGeneration()
+    }
+  }, [ renderInterval ])
 
-  function isRunning() {
-    return timeout !== null
-  }
+  const generationIndex = () => generations.findIndex(it => it.id === current.id)
+
+  const isRunning = () => timeout !== null
+
+  const resume = () => !isRunning() && _scheduleNextGeneration()
 
   function reset() {
     console.log('resetting game to generation 0')
     pause()
-    const [ initial ] = generations
-    setCurrent(initial)
-    clear()
+    resetGenerations()
+  }
+
+  function changePattern(newPattern: Pattern) {
+    resetGenerations()
+    setPattern(newPattern)
+    const newGrid = gridOf(newPattern)
+    setCurrent(newGrid)
+    setGenerations([ newGrid ])
   }
 
   function pause() {
     clearInterval(timeout)
     setRenderTimeout(null)
-  }
-
-  function resume() {
-    if (!isRunning()) {
-      nextGeneration()
-      setRenderTimeout(setInterval(nextGeneration, interval))
-    }
   }
 
   function cellClicked(x: number, y: number) {
@@ -47,34 +60,47 @@ export default function useGame(initial: Grid, rules: Rules, interval: number) {
     setCurrent(current.copy)
   }
 
-  function moveGeneration(direction: Direction) {
-    if (isRunning()) {
-      return
-    }
+  function stepCurrentGeneration(direction: Direction) {
     const currentIndex = generationIndex()
-    if (currentIndex === -1) {
+    if (isRunning() || currentIndex === -1) {
       return
     }
-    const targetIndex = direction === Direction.Backward
-      ? currentIndex - 1 : currentIndex + 1
-    const target = generations[ targetIndex ]
+    direction === Direction.Forward ? _stepForward() : _stepBackward()
+  }
+
+  function _stepBackward() {
+    const currentIndex = generationIndex()
+    if (isRunning() || currentIndex === -1) {
+      return
+    }
+    const target = generations[ currentIndex - 1 ]
     if (target) {
-      console.log(
-        `moving current generation from '${currentIndex}' -> '${targetIndex}'`)
       setCurrent(target)
-    } else if (direction === Direction.Forward) {
-      nextGeneration()
+      setGenerations(generations.slice(0, currentIndex))
     }
   }
 
-  function nextGeneration(current: Grid = ref.current) {
-    const next = rules(current)
+  function _scheduleNextGeneration() {
+    // console.warn('scheduling next generation in ', renderInterval, 'ms')
+    clearInterval(timeout)
+    _stepForward()
+    setRenderTimeout(setInterval(_stepForward, renderInterval))
+  }
+
+  /**
+   * this may be called asynchronously, so it's important to use the
+   * ref to get the up-to-date value during (potentially suspended) execution
+   * @see {useGenerations}
+   */
+  function _stepForward() {
+    const next = rules(ref.current)
     setCurrent(next)
-    add(next)
+    addGeneration(next)
   }
 
   return {
-    reset, pause, resume, moveGeneration, cellClicked, isRunning,
-    current, generationIndex: generationIndex()
+    reset, pause, resume, stepCurrentGeneration, cellClicked, isRunning,
+    current, generationIndex, renderInterval, setRenderInterval: setIntervalState,
+    changePattern, pattern
   }
 }

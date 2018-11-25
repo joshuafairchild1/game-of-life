@@ -16,14 +16,16 @@ export default function useGenerations(
   const currentRef = usePersistentRef(current)
   const generationsRef = usePersistentRef(generations)
 
-  const add = (next: Grid) =>
+  const addGeneration = (next: Grid) =>
     setGenerations(generationsRef.current.concat(next))
-  const clear = () => {
+  const resetGenerations = () => {
     Grid.resetIdCounter()
-    setGenerations([ generations[0] ])
+    const [ initial ] = generations
+    setCurrent(initial)
+    setGenerations([ initial ])
   }
   return {
     currentGeneration: { current, ref: currentRef }, setCurrent,
-    generations, add, clear
+    generations, addGeneration, setGenerations, resetGenerations
   }
 }
