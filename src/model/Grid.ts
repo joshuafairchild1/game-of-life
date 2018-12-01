@@ -11,12 +11,9 @@ import { Coordinate } from '../Types'
  *  ...
  */
 
-let currentGridId = 0
-
 export default class Grid {
-  private constructor(private readonly grid: Array<Cell[]> = [], id?: number) {
+  private constructor(private readonly grid: Array<Cell[]> = [], readonly id: number) {
     this.isWithinBounds = this.isWithinBounds.bind(this)
-    this.id = id === undefined ? currentGridId++ : id
   }
 
   get length() {
@@ -81,6 +78,11 @@ export default class Grid {
       .map(([ x, y ]) => this.get(x, y))
   }
 
+  ifDeadCell(cellX: number, cellY: number, operation: () => void) {
+    // noinspection JSSuspiciousNameCombination
+    !this.get(Math.floor(cellX), Math.floor(cellY)).alive && operation()
+  }
+
   get copy() {
     return new Grid(this.grid, this.id)
   }
@@ -98,8 +100,8 @@ export default class Grid {
     return column && (column[ y ] instanceof Cell) || false
   }
 
-  static createWithLength(length: number, pattern?: Pattern) {
-    const grid = new Grid()
+  static createWithLength(length: number, id: number, pattern?: Pattern) {
+    const grid = new Grid([], id)
     for (let x = 0; x < length; x++) {
       const column = grid.addColumn()
       for (let y = 0; y < length; y++) {
@@ -111,9 +113,4 @@ export default class Grid {
     return grid
   }
 
-  static resetIdCounter() {
-    currentGridId = 1
-  }
-
-  readonly id: number
 }

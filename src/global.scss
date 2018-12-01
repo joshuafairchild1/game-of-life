@@ -1,5 +1,6 @@
 html {
   background-color: #bbbbbb;
+  font-family: 'Roboto', 'sans-serif';
 }
 
 canvas#canvas {
@@ -10,25 +11,94 @@ canvas#canvas {
 
 div.controls {
   position: absolute;
-  border: solid 3px black;
-  border-radius: 5%;
-  background-color: #b8c0c7;
   padding: 1em;
   width: 15vw;
 
-  button.control-icon {
-    margin: .1em;
+  div.control-icons {
+
+    margin: auto;
+    display: flex;
+    justify-content: space-evenly;
+
+    .control-icon {
+      font-size: 1.7em;
+      padding: .1em;
+    }
+
+    .control-icon:hover {
+      background-color: dimgrey;
+      border-radius: 20%;
+      animation: fadein 1.5s;
+      color: #00d9d9;
+    }
+
+    .control-icon.icon-reset {
+      top: .04em;
+      position: relative;
+    }
+
+    .control-icon.not-allowed {
+      cursor: not-allowed;
+      color: lightgray;
+    }
   }
 
-  div.control-generations {
-    margin: .5em 0;
+  div.control-pattern {
+    margin: 1em 0;
+  }
+
+  div.control-generation-interval {
+    margin: 1em 0;
     label {
       font-size: small;
       margin-right: .5em;
     }
     input {
+      text-align: center;
       width: 4em;
     }
   }
 
+  div.control-cell-count {
+    input {
+      text-align: right;
+    }
+  }
+
+  span.control-generation-editable {
+    padding: .2em 1em;
+    cursor: pointer;
+  }
+
+  span.control-generation-editable:hover {
+    background-color: lightgrey;
+    border-radius: 10%;
+    animation: fadein 0.5s;
+  }
+
+  form.control-generation-edit {
+    display: inline;
+
+    input {
+      width: 3.5em;
+      text-align: right;
+    }
+
+    .icon-check {
+      font-size: 1.4em;
+      top: .35em;
+      position: relative;
+      padding-left: .2em;
+      cursor: pointer;
+    }
+
+    .icon-check:hover {
+      opacity: .5;
+    }
+  }
+}
+
+@keyframes fadein {
+  from { opacity: .5; }
+  to   { opacity: 1; }
 }

@@ -11,7 +11,7 @@ describe('applyRules', function() {
   let grid: Grid
 
   beforeEach(function () {
-    grid = Grid.createWithLength(10)
+    grid = Grid.createWithLength(10, 0)
   })
 
   it('kills a cell with < 2 live neighbors', function () {

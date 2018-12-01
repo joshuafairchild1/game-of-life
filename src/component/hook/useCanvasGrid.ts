@@ -1,22 +1,27 @@
 import Grid from '../../model/Grid'
 import CanvasConfig from '../../model/CanvasConfig'
-import { useMutationEffect } from 'react'
 import useCanvas from './useCanvas'
 import useCanvasContext from './useCanvasContext'
 
+import { useLayoutEffect } from 'react'
+import { Coordinate } from '../../Types'
+import { timed } from '../../utils'
+
 const BACKGROUND = '#eaeaea'
+// not sure why getting these values during useMutationEffect
+// breaks highlighting, so using this for now
+let currentHoveredCellPosition: Coordinate | null = null
+const setHoveredCell = (next: Coordinate) => currentHoveredCellPosition = next
 
 export default function useCanvasGrid(grid: Grid, config: CanvasConfig) {
   const { lineWidth, lineSeparation, canvasLength, border, cellCount } = config
   const { canvasRef, context } = useCanvas(lineWidth)
   const withContext = useCanvasContext(context)
-
-  useMutationEffect(drawGrid)
+  useLayoutEffect(() => timed('draw grid', drawGrid), [ grid ])
+  const toCanvasPosition = (cellPosition: number) => cellPosition * lineSeparation
 
   function drawGrid() {
-    // const start = Date.now()
     withContext(context => {
-      // console.log('drawing grid generation', grid.id)
       context.clear(canvasLength)
       context.withPath(() => {
         context.fillSquare(0, 0, canvasLength, BACKGROUND)
@@ -25,7 +30,7 @@ export default function useCanvasGrid(grid: Grid, config: CanvasConfig) {
           forEachCell((y, positionY) => {
             const cell = grid.get(x, y)
             if (cell.alive) {
-              drawLivingCell(positionX, positionY)
+              drawCell(positionX, positionY)
             }
           })
         })
@@ -33,7 +38,6 @@ export default function useCanvasGrid(grid: Grid, config: CanvasConfig) {
         context.draw(0, canvasLength, canvasLength, canvasLength)
       })
     })
-    // console.debug('rendering grid took', Date.now() - start, 'ms')
   }
 
   function drawLines(position: number) {
@@ -43,28 +47,59 @@ export default function useCanvasGrid(grid: Grid, config: CanvasConfig) {
     })
   }
 
-  function drawLivingCell(positionX: number, positionY: number) {
-    withContext(({ fillSquare }) => {
+  function drawCell(
+    positionX: number, positionY: number,
+    color = 'black', withBackground: boolean = true, withOutline: boolean = false
+  ) {
+    withContext(({ fillSquare, draw }) => {
       const borderX = positionX + border
       const borderY = positionY + border
       const borderLength = lineSeparation - (border * 2)
-      fillSquare(positionX, positionY, lineSeparation, BACKGROUND)
-      fillSquare(borderX, borderY, borderLength, 'black')
+      if (withBackground) {
+        fillSquare(positionX, positionY, lineSeparation, BACKGROUND)
+        fillSquare(borderX, borderY, borderLength, color)
+      } else {
+        fillSquare(positionX, positionY, lineSeparation, color)
+      }
+      if (withOutline) {
+        const xPlusOne = positionX + lineSeparation
+        const yPlusOne = positionY + lineSeparation
+        draw(positionX, positionY, xPlusOne, positionY)
+        draw(xPlusOne, positionY, xPlusOne, yPlusOne)
+        draw(xPlusOne, yPlusOne, positionX, yPlusOne)
+        draw(positionX, yPlusOne, positionX, positionY)
+      }
     })
   }
 
   function forEachCell(
     action: (position: number, cellIndex: number) => void
   ) {
-    for (let index = 0; index < cellCount; index++) {
+    for (let cellIndex = 0; cellIndex < cellCount; cellIndex++) {
       try {
-        action(index, index * lineSeparation)
+        action(cellIndex, toCanvasPosition(cellIndex))
       } catch (ex) {
         console.warn(
-          'error invoking action at cell position', index, ex)
+          'error invoking action at cell position', cellIndex, ex)
       }
     }
   }
 
-  return canvasRef
+  function highlightCell(cellX: number, cellY: number) {
+    const posX = toCanvasPosition(cellX)
+    const posY = toCanvasPosition(cellY)
+    // fill in the current hovered cell before highlighting the next target
+    if (currentHoveredCellPosition) {
+      const [ hoveredX, hoveredY ] = currentHoveredCellPosition
+      grid.ifDeadCell(hoveredX / lineSeparation, hoveredY / lineSeparation,
+        () => drawCell(hoveredX, hoveredY, BACKGROUND, false, true))
+    }
+    grid.ifDeadCell(cellX, cellY, () => {
+      drawCell(posX, posY, '#00d9d9', false, true)
+      setHoveredCell([ posX, posY ])
+      currentHoveredCellPosition = [ posX, posY ]
+    })
+  }
+
+  return { canvasRef, highlightCell }
 }

@@ -9,7 +9,7 @@ describe('Grid', function() {
   let uut: Grid
 
   beforeEach(function () {
-    uut = Grid.createWithLength(10)
+    uut = Grid.createWithLength(10, 0)
   })
 
   it('length', function () {

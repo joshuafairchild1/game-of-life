@@ -4,29 +4,36 @@ import Grid from '../model/Grid'
 import useCanvasGrid from './hook/useCanvasGrid'
 
 type Props = {
-  config: CanvasConfig
+  configuration: CanvasConfig
   grid: Grid
   onCellClick: (x: number, y: number) => void
 }
+const CanvasGrid: React.FC<Props> = ({ grid, configuration, onCellClick }) => {
+  const { canvasRef, highlightCell } = useCanvasGrid(grid, configuration)
+  const { current } = canvasRef
 
-const CanvasGrid: React.FC<Props> = ({ grid, config, onCellClick }) => {
-  const ref = useCanvasGrid(grid, config)
-  const { current } = ref
-  return <canvas
-    ref={ref} id="canvas"
-    width={config.canvasLength}
-    height={config.canvasLength}
-    onClick={event => {
+  function handleCellInteraction(
+    handler: (cellX: number, cellY: number) => void
+  ) {
+    return function handleEvent(event: React.MouseEvent<HTMLCanvasElement>) {
       if (current) {
-        const [ x, y ] = determineClickedCell(event, current, config.lineSeparation)
-        onCellClick(x, y)
-      }}
-    }/>
-}
+        const [ x, y ] = determineEnclosingCell(
+          event, current, configuration.lineSeparation)
+        handler(x, y)
+      }
+    }
+  }
 
+  return <canvas
+    ref={canvasRef} id="canvas"
+    width={configuration.canvasLength}
+    height={configuration.canvasLength}
+    onMouseMove={handleCellInteraction(highlightCell)}
+    onClick={handleCellInteraction(onCellClick)}/>
+}
 export default CanvasGrid
 
-const determineClickedCell = (
+const determineEnclosingCell = (
   event: React.MouseEvent<HTMLCanvasElement>,
   canvas: HTMLCanvasElement, lineSeparation: number
 ) => {

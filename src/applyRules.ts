@@ -2,7 +2,7 @@ import Grid from './model/Grid'
 import { alive, dead } from './model/Cell'
 
 export default function applyRules(current: Grid) {
-  const pending = Grid.createWithLength(current.length)
+  const pending = Grid.createWithLength(current.length, current.id + 1)
   current.forEach(cell => {
     const livingNeighbors = current.countLivingNeighbors(cell)
     const update = cell.alive

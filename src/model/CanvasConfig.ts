@@ -2,13 +2,15 @@
 
 export default class CanvasConfig {
   constructor(
-    readonly canvasLength: number,
+    approximateLength: number,
     readonly lineSeparation: number,
     readonly lineWidth: number,
     readonly border: number,
   ) {
-    this.cellCount = Math.floor(canvasLength / lineSeparation)
+    const cellCount = this.cellCount = Math.ceil(approximateLength / lineSeparation)
+    this.canvasLength = cellCount * lineSeparation
   }
 
   readonly cellCount: number
+  readonly canvasLength: number
 }

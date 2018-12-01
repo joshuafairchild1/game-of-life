@@ -1,34 +1,68 @@
 import Grid from '../../model/Grid'
-import { useEffect, useState } from 'react'
 import useGenerations from './useGenerations'
-import { Rules } from '../../Types'
-import useInterval from './useInterval'
 import Pattern from '../../model/Pattern'
 import Direction from '../../Direction'
+import Cell from '../../model/Cell'
 
-export default function useGame(
-  initial: Pattern, cellCount: number, rules: Rules, initialInterval: number
-) {
-  const gridOf = (pattern: Pattern) => Grid.createWithLength(cellCount, pattern)
-  const [ pattern, setPattern ] = useState(initial)
+import { Rules } from '../../Types'
+import { timed } from '../../utils'
+import { useEffect, useLayoutEffect, useState } from 'react'
+import { DynamicConfigurations } from './useDynamicConfigurations'
+
+export interface Game {
+  current: Grid,
+  reset: VoidFunction,
+  pause: VoidFunction,
+  resume: VoidFunction,
+  stepCurrentGeneration: (direction: Direction) => void,
+  cellClicked: (cellX: number, cellY: number) => void,
+  isRunning: () => boolean,
+  generationIndex: () => number,
+  setGenerationIndex: (targetIndex: number) => void
+}
+
+export type GameConfiguration = {
+  cellCount: DynamicConfigurations['cellCount']
+  renderInterval: DynamicConfigurations['renderInterval']
+  pattern: DynamicConfigurations['pattern']
+  rules: Rules
+}
+
+export default function useGame({ rules, ...configuration }: GameConfiguration): Game {
+  const renderInterval = configuration.renderInterval.get()
+  const cellCount = configuration.cellCount.get()
+  const pattern = configuration.pattern.get()
   const [ timeout, setRenderTimeout ] = useState<any | null>(null)
-  const {
-    current: renderInterval, previous: lastRenderInterval, setIntervalState
-  } = useInterval(initialInterval)
+  const gridOf = (pattern: Pattern, id: number) =>
+    Grid.createWithLength(cellCount, id, pattern)
   const {
     currentGeneration: { current, ref }, setCurrent,
     generations, addGeneration, setGenerations, resetGenerations
-  } = useGenerations(gridOf(pattern))
+  } = useGenerations(gridOf(pattern, 0))
 
   useEffect(() => {
     // if the interval changes, the next generation must be rescheduled
     // to start generations on the new interval
-    if (renderInterval !== lastRenderInterval && isRunning()) {
+    if (renderInterval !== configuration.renderInterval.getPrevious() && isRunning()) {
       _scheduleNextGeneration()
     }
   }, [ renderInterval ])
 
-  const generationIndex = () => generations.findIndex(it => it.id === current.id)
+  useLayoutEffect(_updateCurrentGrid, [ cellCount ])
+
+  useEffect(_applyNewPattern, [ pattern ])
+
+  const generationIndex = () => {
+    const index = generations.findIndex(it => it.id === ref.current.id)
+    if (index === -1) {
+      throw Error(
+        `BUG: could not determine index of current generation
+         generations: ${generations.length}
+         currentGeneration id: ${current.id}`
+      )
+    }
+    return index
+  }
 
   const isRunning = () => timeout !== null
 
@@ -40,10 +74,9 @@ export default function useGame(
     resetGenerations()
   }
 
-  function changePattern(newPattern: Pattern) {
+  function _applyNewPattern() {
     resetGenerations()
-    setPattern(newPattern)
-    const newGrid = gridOf(newPattern)
+    const newGrid = gridOf(pattern, current.id)
     setCurrent(newGrid)
     setGenerations([ newGrid ])
   }
@@ -61,23 +94,74 @@ export default function useGame(
   }
 
   function stepCurrentGeneration(direction: Direction) {
+    if (!isRunning()) {
+      direction === Direction.Forward
+        ? _stepForward() : _stepBackward()
+    }
+  }
+
+  function setGenerationIndex(nextIndex: number) {
     const currentIndex = generationIndex()
-    if (isRunning() || currentIndex === -1) {
+    if (currentIndex === nextIndex) {
       return
     }
-    direction === Direction.Forward ? _stepForward() : _stepBackward()
+    if (nextIndex < currentIndex) {
+      const target = generations[nextIndex]
+      _setMostRecentGeneration(target, nextIndex + 1)
+    } else {
+      timed(`progress generations to ${nextIndex}`,
+        () => _progressGenerations(nextIndex))
+    }
+  }
+
+  function _updateCurrentGrid() {
+    // TODO: grid.cloneToLength()
+    if (cellCount === current.length) {
+      return
+    }
+    const nextGridIsLarger = current.length < cellCount
+    const nextGrid = Grid.createWithLength(cellCount, current.id)
+    if (nextGridIsLarger) {
+      const distance = cellCount - current.length
+      current.forEach(cell =>
+        nextGrid.set(new Cell(cell.x + distance, cell.y + distance, cell.status)))
+    } else {
+      const distance = current.length - cellCount
+      current.forEach(cell => {
+        const x = cell.x - distance
+        const y = cell.y - distance
+        if (x >= 0 && y >= 0) {
+          nextGrid.set(new Cell(x, y, cell.status))
+        }
+      })
+    }
+    setGenerations([ ...generations.slice(0, generations.length - 1), nextGrid ])
+    setCurrent(nextGrid)
   }
 
   function _stepBackward() {
     const currentIndex = generationIndex()
-    if (isRunning() || currentIndex === -1) {
-      return
-    }
     const target = generations[ currentIndex - 1 ]
     if (target) {
-      setCurrent(target)
-      setGenerations(generations.slice(0, currentIndex))
+      _setMostRecentGeneration(target, currentIndex)
     }
+  }
+
+  function _setMostRecentGeneration(target: Grid, generationsLength: number) {
+    setCurrent(target)
+    setGenerations(generations.slice(0, generationsLength))
+  }
+
+  function _progressGenerations(targetGenerationIndex: number) {
+    const delta = targetGenerationIndex - generationIndex()
+    const newGenerations = []
+    let lastNewGeneration = current
+    for (let i = 0; i < delta; i++) {
+      lastNewGeneration = rules(lastNewGeneration)
+      newGenerations.push(lastNewGeneration)
+    }
+    setGenerations([ ...generations, ...newGenerations ])
+    setCurrent(lastNewGeneration)
   }
 
   function _scheduleNextGeneration() {
@@ -93,14 +177,13 @@ export default function useGame(
    * @see {useGenerations}
    */
   function _stepForward() {
-    const next = rules(ref.current)
-    setCurrent(next)
+    const next = timed('apply rules', () => rules(ref.current))
     addGeneration(next)
+    setCurrent(next)
   }
 
   return {
     reset, pause, resume, stepCurrentGeneration, cellClicked, isRunning,
-    current, generationIndex, renderInterval, setRenderInterval: setIntervalState,
-    changePattern, pattern
+    current, generationIndex, setGenerationIndex
   }
 }

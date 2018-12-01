@@ -19,7 +19,6 @@ export default function useGenerations(
   const addGeneration = (next: Grid) =>
     setGenerations(generationsRef.current.concat(next))
   const resetGenerations = () => {
-    Grid.resetIdCounter()
     const [ initial ] = generations
     setCurrent(initial)
     setGenerations([ initial ])
