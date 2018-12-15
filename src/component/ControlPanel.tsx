@@ -3,13 +3,13 @@ import PatternPicker from './PatternPicker'
 import Pattern from '../model/Pattern'
 import Direction from '../Direction'
 import Card from '@material-ui/core/Card/Card'
-import Input from '@material-ui/core/Input/Input'
 import GenerationInput from './GenerationInput'
+import Slider from '@material-ui/lab/Slider/Slider'
 
-import { ChangeEvent } from 'react'
 import { Pause, PlayArrow, Replay, SkipNext, SkipPrevious } from '@material-ui/icons'
 import { Game } from './hook/useGame'
 import { DynamicConfiguration } from '../Types'
+import { invert } from '../utils'
 
 type Props = {
   allPatterns: Pattern[]
@@ -19,13 +19,17 @@ type Props = {
   renderInterval: DynamicConfiguration<number>
 }
 
+const CELLS_MIN = 3
+const CELLS_MAX = 75
+const INTERVAL_MIN_MS = 10
+const INTERVAL_MAX_MS = 500
+
 const ControlPanel: React.FC<Props> = props => {
   const { game } = props
   const generationIndex = game.generationIndex()
   const isFirstGeneration = generationIndex === 0
-  const changeInterval = (event: ChangeEvent<HTMLInputElement>) =>
-    props.renderInterval.set(parseInt(event.target.value) || 0)
   const isPaused = !game.isRunning()
+  const cellCount = props.cellCount.get()
   return <Card className="controls">
     <div className="control-icons">
       <Replay titleAccess="Restart"
@@ -52,23 +56,26 @@ const ControlPanel: React.FC<Props> = props => {
         options={props.allPatterns}
         selected={props.pattern.get()}/>
     </div>
-    <div className="control-generation-interval">
-      <label>Generation interval (ms)</label>
-      <Input value={props.renderInterval.get()}
-             type="number" inputProps={{ min: 1 }}
-             onChange={changeInterval}/>
-    </div>
     <small>Current generation:&nbsp;</small>
     <GenerationInput
       currentGenerationIndex={generationIndex}
       onSubmit={game.setGenerationIndex}/>
-    <div className="control-cell-count">
-      <small>Dimensions</small>
-      <Input value={props.cellCount.get() || 3} type="number"
-             inputProps={{ min: 3, max: 100 }}
-             onChange={event =>
-               props.cellCount.set(parseInt(event.target.value) || 3)}/>
-      x {props.cellCount.get()}
+    <div className="control-generation-interval">
+      <label>Speed</label>
+      <Slider value={invert(props.renderInterval.get(), INTERVAL_MIN_MS, INTERVAL_MAX_MS)}
+              min={INTERVAL_MIN_MS} max={INTERVAL_MAX_MS} step={1}
+              onChange={(_, value) =>
+                props.renderInterval.set(invert(value, INTERVAL_MIN_MS, INTERVAL_MAX_MS))}/>
+    </div>
+    <div className="control-cell-container">
+      <small>Dimensions: {cellCount} x {cellCount} </small>
+      <div className="control-cell-count">
+        <small className="cell-count-min">{CELLS_MIN} &nbsp;</small>
+          <Slider value={cellCount}
+                  min={CELLS_MIN} max={CELLS_MAX} step={1}
+                  onChange={(_, value) => props.cellCount.set(value)}/>
+        <small className="cell-count-max">&nbsp; {CELLS_MAX}</small>
+      </div>
     </div>
   </Card>
 }

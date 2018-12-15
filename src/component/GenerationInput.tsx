@@ -1,6 +1,6 @@
 import * as React from 'react'
 import Input from '@material-ui/core/Input/Input'
-import useEscapeKey from './hook/useEscapeKey'
+import useKeyEffect from './hook/useKeyEffect'
 
 import { CheckCircle } from '@material-ui/icons'
 import { isNumber } from '../utils'
@@ -16,7 +16,7 @@ const GenerationInput: React.FC<Props> = props => {
   const [ editValue, setEditValue ] = useState(props.currentGenerationIndex.toString())
   const [ isEditing, setIsEditing ] = useState(false)
   const inputRef = useRef<HTMLInputElement | null>(null)
-  const handleEscape = useEscapeKey(() => {
+  const handleEscape = useKeyEffect('Escape', () => {
     setIsEditing(false)
     props.onSubmit(props.currentGenerationIndex)
   })

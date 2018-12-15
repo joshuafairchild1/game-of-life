@@ -5,7 +5,7 @@ html {
 
 canvas#canvas {
   padding: 0;
-  margin: auto;
+  margin: 2em auto;
   display: block;
 }
 
@@ -13,33 +13,35 @@ div.controls {
   position: absolute;
   padding: 1em;
   width: 15vw;
+  margin-left: 1.5em;
 
   div.control-icons {
-
     margin: auto;
     display: flex;
     justify-content: space-evenly;
 
     .control-icon {
-      font-size: 1.7em;
+      font-size: 2em;
       padding: .1em;
+      color: #3f51b5;
     }
 
     .control-icon:hover {
-      background-color: dimgrey;
+      background-color: rgba(0, 21, 156, 0.17);
+      opacity: 50%;
       border-radius: 20%;
-      animation: fadein 1.5s;
-      color: #00d9d9;
+      animation: fadein 1s;
     }
 
     .control-icon.icon-reset {
-      top: .04em;
+      top: .08em;
+      font-size: 1.8em;
       position: relative;
     }
 
     .control-icon.not-allowed {
       cursor: not-allowed;
-      color: lightgray;
+      color: grey;
     }
   }
 
@@ -52,6 +54,8 @@ div.controls {
     label {
       font-size: small;
       margin-right: .5em;
+      position: relative;
+      bottom: .5em;
     }
     input {
       text-align: center;
@@ -59,9 +63,24 @@ div.controls {
     }
   }
 
-  div.control-cell-count {
-    input {
-      text-align: right;
+  div.control-cell-container {
+    margin-top: 1em;
+
+    div.control-cell-count {
+      margin-top: 0.8em;
+      display: flex;
+
+      small.cell-count-min {
+        position: relative;
+        top: -0.55em;
+        right: .1em;
+      }
+
+      small.cell-count-max {
+        position: relative;
+        top: -1.75em;
+        left: 0.5em;
+      }
     }
   }
 
@@ -81,7 +100,7 @@ div.controls {
 
     input {
       width: 3.5em;
-      text-align: right;
+      text-align: center;
     }
 
     .icon-check {
@@ -90,6 +109,7 @@ div.controls {
       position: relative;
       padding-left: .2em;
       cursor: pointer;
+      color: #3f51b5;
     }
 
     .icon-check:hover {

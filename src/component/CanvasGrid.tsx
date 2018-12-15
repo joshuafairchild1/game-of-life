@@ -1,7 +1,7 @@
 import * as React from 'react'
 import CanvasConfig from '../model/CanvasConfig'
 import Grid from '../model/Grid'
-import useCanvasGrid from './hook/useCanvasGrid'
+import useCanvasGrid  from './hook/useCanvasGrid'
 
 type Props = {
   configuration: CanvasConfig
@@ -9,7 +9,11 @@ type Props = {
   onCellClick: (x: number, y: number) => void
 }
 const CanvasGrid: React.FC<Props> = ({ grid, configuration, onCellClick }) => {
-  const { canvasRef, highlightCell } = useCanvasGrid(grid, configuration)
+  const {
+    canvasRef,
+    highlightCell,
+    unhighlightActiveCell
+  } = useCanvasGrid(grid, configuration)
   const { current } = canvasRef
 
   function handleCellInteraction(
@@ -23,11 +27,11 @@ const CanvasGrid: React.FC<Props> = ({ grid, configuration, onCellClick }) => {
       }
     }
   }
-
   return <canvas
     ref={canvasRef} id="canvas"
     width={configuration.canvasLength}
     height={configuration.canvasLength}
+    onMouseOut={handleCellInteraction(unhighlightActiveCell)}
     onMouseMove={handleCellInteraction(highlightCell)}
     onClick={handleCellInteraction(onCellClick)}/>
 }

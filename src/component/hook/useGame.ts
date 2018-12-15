@@ -2,7 +2,6 @@ import Grid from '../../model/Grid'
 import useGenerations from './useGenerations'
 import Pattern from '../../model/Pattern'
 import Direction from '../../Direction'
-import Cell from '../../model/Cell'
 
 import { Rules } from '../../Types'
 import { timed } from '../../utils'
@@ -14,6 +13,7 @@ export interface Game {
   reset: VoidFunction,
   pause: VoidFunction,
   resume: VoidFunction,
+  togglePlaying: VoidFunction
   stepCurrentGeneration: (direction: Direction) => void,
   cellClicked: (cellX: number, cellY: number) => void,
   isRunning: () => boolean,
@@ -40,17 +40,11 @@ export default function useGame({ rules, ...configuration }: GameConfiguration):
     generations, addGeneration, setGenerations, resetGenerations
   } = useGenerations(gridOf(pattern, 0))
 
-  useEffect(() => {
-    // if the interval changes, the next generation must be rescheduled
-    // to start generations on the new interval
-    if (renderInterval !== configuration.renderInterval.getPrevious() && isRunning()) {
-      _scheduleNextGeneration()
-    }
-  }, [ renderInterval ])
-
   useLayoutEffect(_updateCurrentGrid, [ cellCount ])
 
   useEffect(_applyNewPattern, [ pattern ])
+
+  useEffect(_rescheduleNextGeneration, [ renderInterval ])
 
   const generationIndex = () => {
     const index = generations.findIndex(it => it.id === ref.current.id)
@@ -68,17 +62,12 @@ export default function useGame({ rules, ...configuration }: GameConfiguration):
 
   const resume = () => !isRunning() && _scheduleNextGeneration()
 
+  const togglePlaying = () => isRunning() ? pause() : resume()
+
   function reset() {
     console.log('resetting game to generation 0')
     pause()
     resetGenerations()
-  }
-
-  function _applyNewPattern() {
-    resetGenerations()
-    const newGrid = gridOf(pattern, current.id)
-    setCurrent(newGrid)
-    setGenerations([ newGrid ])
   }
 
   function pause() {
@@ -115,26 +104,10 @@ export default function useGame({ rules, ...configuration }: GameConfiguration):
   }
 
   function _updateCurrentGrid() {
-    // TODO: grid.cloneToLength()
     if (cellCount === current.length) {
       return
     }
-    const nextGridIsLarger = current.length < cellCount
-    const nextGrid = Grid.createWithLength(cellCount, current.id)
-    if (nextGridIsLarger) {
-      const distance = cellCount - current.length
-      current.forEach(cell =>
-        nextGrid.set(new Cell(cell.x + distance, cell.y + distance, cell.status)))
-    } else {
-      const distance = current.length - cellCount
-      current.forEach(cell => {
-        const x = cell.x - distance
-        const y = cell.y - distance
-        if (x >= 0 && y >= 0) {
-          nextGrid.set(new Cell(x, y, cell.status))
-        }
-      })
-    }
+    const nextGrid = current.copyToLength(cellCount)
     setGenerations([ ...generations.slice(0, generations.length - 1), nextGrid ])
     setCurrent(nextGrid)
   }
@@ -177,13 +150,26 @@ export default function useGame({ rules, ...configuration }: GameConfiguration):
    * @see {useGenerations}
    */
   function _stepForward() {
-    const next = timed('apply rules', () => rules(ref.current))
+    const next = rules(ref.current)
     addGeneration(next)
     setCurrent(next)
   }
 
+  function _applyNewPattern() {
+    resetGenerations()
+    const newGrid = gridOf(pattern, current.id)
+    setCurrent(newGrid)
+    setGenerations([ newGrid ])
+  }
+
+  function _rescheduleNextGeneration() {
+    if (renderInterval !== configuration.renderInterval.getPrevious() && isRunning()) {
+      _scheduleNextGeneration()
+    }
+  }
+
   return {
     reset, pause, resume, stepCurrentGeneration, cellClicked, isRunning,
-    current, generationIndex, setGenerationIndex
+    current, generationIndex, setGenerationIndex, togglePlaying
   }
 }

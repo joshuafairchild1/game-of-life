@@ -9,3 +9,7 @@ export function timed<T>(label: string, operation: () => T) {
 export function isNumber(value: number) {
   return !Number.isNaN(value)
 }
+
+export function invert(value: number, min: number, max: number) {
+  return Math.abs(value - max) + min
+}

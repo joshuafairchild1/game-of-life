@@ -83,6 +83,27 @@ export default class Grid {
     !this.get(Math.floor(cellX), Math.floor(cellY)).alive && operation()
   }
 
+  copyToLength(nextLength: number) {
+    const { length } = this
+    const copy = Grid.createWithLength(nextLength, this.id)
+    const copyIsLarger = length < copy.length
+    if (copyIsLarger) {
+      const distance = nextLength - length
+      this.forEach(cell =>
+        copy.set(new Cell(cell.x + distance, cell.y + distance, cell.status)))
+    } else {
+      const distance = length - nextLength
+      this.forEach(cell => {
+        const x = cell.x - distance
+        const y = cell.y - distance
+        if (x >= 0 && y >= 0) {
+          copy.set(new Cell(x, y, cell.status))
+        }
+      })
+    }
+    return copy
+  }
+
   get copy() {
     return new Grid(this.grid, this.id)
   }

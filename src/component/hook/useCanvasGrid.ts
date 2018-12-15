@@ -1,13 +1,13 @@
-import Grid from '../../model/Grid'
 import CanvasConfig from '../../model/CanvasConfig'
+import Grid from '../../model/Grid'
 import useCanvas from './useCanvas'
 import useCanvasContext from './useCanvasContext'
 
 import { useLayoutEffect } from 'react'
 import { Coordinate } from '../../Types'
-import { timed } from '../../utils'
 
-const BACKGROUND = '#eaeaea'
+const BACKGROUND_COLOR = '#eaeaea'
+const HOVER_COLOR = '#A8A8A8'
 // not sure why getting these values during useMutationEffect
 // breaks highlighting, so using this for now
 let currentHoveredCellPosition: Coordinate | null = null
@@ -17,14 +17,15 @@ export default function useCanvasGrid(grid: Grid, config: CanvasConfig) {
   const { lineWidth, lineSeparation, canvasLength, border, cellCount } = config
   const { canvasRef, context } = useCanvas(lineWidth)
   const withContext = useCanvasContext(context)
-  useLayoutEffect(() => timed('draw grid', drawGrid), [ grid ])
+  useLayoutEffect(drawGrid, [ grid ])
   const toCanvasPosition = (cellPosition: number) => cellPosition * lineSeparation
+  const toCellPosition = (cellPosition: number) => cellPosition / lineSeparation
 
   function drawGrid() {
     withContext(context => {
       context.clear(canvasLength)
       context.withPath(() => {
-        context.fillSquare(0, 0, canvasLength, BACKGROUND)
+        context.fillSquare(0, 0, canvasLength, BACKGROUND_COLOR)
         forEachCell((x, positionX) => {
           drawLines(positionX)
           forEachCell((y, positionY) => {
@@ -34,6 +35,10 @@ export default function useCanvasGrid(grid: Grid, config: CanvasConfig) {
             }
           })
         })
+        if (currentHoveredCellPosition) {
+          const [ posX, posY ] = currentHoveredCellPosition
+          highlightCell(toCellPosition(posX), toCellPosition(posY))
+        }
         context.draw(canvasLength, 0, canvasLength, canvasLength)
         context.draw(0, canvasLength, canvasLength, canvasLength)
       })
@@ -49,14 +54,16 @@ export default function useCanvasGrid(grid: Grid, config: CanvasConfig) {
 
   function drawCell(
     positionX: number, positionY: number,
-    color = 'black', withBackground: boolean = true, withOutline: boolean = false
+    color = 'black',
+    withBackground: boolean = true,
+    withOutline: boolean = false
   ) {
     withContext(({ fillSquare, draw }) => {
       const borderX = positionX + border
       const borderY = positionY + border
       const borderLength = lineSeparation - (border * 2)
       if (withBackground) {
-        fillSquare(positionX, positionY, lineSeparation, BACKGROUND)
+        fillSquare(positionX, positionY, lineSeparation, BACKGROUND_COLOR)
         fillSquare(borderX, borderY, borderLength, color)
       } else {
         fillSquare(positionX, positionY, lineSeparation, color)
@@ -85,21 +92,29 @@ export default function useCanvasGrid(grid: Grid, config: CanvasConfig) {
     }
   }
 
-  function highlightCell(cellX: number, cellY: number) {
+  function highlightCell(cellX: number, cellY: number, color = HOVER_COLOR) {
     const posX = toCanvasPosition(cellX)
     const posY = toCanvasPosition(cellY)
     // fill in the current hovered cell before highlighting the next target
     if (currentHoveredCellPosition) {
       const [ hoveredX, hoveredY ] = currentHoveredCellPosition
       grid.ifDeadCell(hoveredX / lineSeparation, hoveredY / lineSeparation,
-        () => drawCell(hoveredX, hoveredY, BACKGROUND, false, true))
+        () => drawCell(hoveredX, hoveredY, BACKGROUND_COLOR, false, true))
     }
     grid.ifDeadCell(cellX, cellY, () => {
-      drawCell(posX, posY, '#00d9d9', false, true)
+      drawCell(posX, posY, color, false, true)
       setHoveredCell([ posX, posY ])
       currentHoveredCellPosition = [ posX, posY ]
     })
   }
 
-  return { canvasRef, highlightCell }
+  function unhighlightActiveCell() {
+    if (currentHoveredCellPosition) {
+      const [ x, y ] = currentHoveredCellPosition
+      highlightCell(toCellPosition(x), toCellPosition(y), BACKGROUND_COLOR)
+    }
+    currentHoveredCellPosition = null
+  }
+
+  return { canvasRef, highlightCell, unhighlightActiveCell }
 }
