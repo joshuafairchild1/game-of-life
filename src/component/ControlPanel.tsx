@@ -52,7 +52,10 @@ const ControlPanel: React.FC<Props> = props => {
     <div className="control-pattern">
       <div><small>Preset Pattern</small></div>
       <PatternPicker
-        onSelect={props.pattern.set}
+        onSelect={newPattern => {
+          game.pause()
+          props.pattern.set(newPattern)
+        }}
         options={props.allPatterns}
         selected={props.pattern.get()}/>
     </div>
@@ -60,7 +63,7 @@ const ControlPanel: React.FC<Props> = props => {
     <GenerationInput
       currentGenerationIndex={generationIndex}
       onSubmit={game.setGenerationIndex}/>
-    <div className="control-generation-interval">
+    <div className="control-generation-interval control-slider">
       <label>Speed</label>
       <Slider value={invert(props.renderInterval.get(), INTERVAL_MIN_MS, INTERVAL_MAX_MS)}
               min={INTERVAL_MIN_MS} max={INTERVAL_MAX_MS} step={1}
@@ -69,11 +72,11 @@ const ControlPanel: React.FC<Props> = props => {
     </div>
     <div className="control-cell-container">
       <small>Dimensions: {cellCount} x {cellCount} </small>
-      <div className="control-cell-count">
+      <div className="control-cell-count control-slider">
         <small className="cell-count-min">{CELLS_MIN} &nbsp;</small>
-          <Slider value={cellCount}
-                  min={CELLS_MIN} max={CELLS_MAX} step={1}
-                  onChange={(_, value) => props.cellCount.set(value)}/>
+        <Slider value={cellCount}
+                min={CELLS_MIN} max={CELLS_MAX} step={1}
+                onChange={(_, value) => props.cellCount.set(value)}/>
         <small className="cell-count-max">&nbsp; {CELLS_MAX}</small>
       </div>
     </div>

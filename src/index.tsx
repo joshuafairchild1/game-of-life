@@ -12,7 +12,7 @@ import './global.scss'
 
 const GENERATION_INTERVAL = 50
 const LINE_WIDTH = 1
-const config = new CanvasConfig(700, 18, LINE_WIDTH, LINE_WIDTH * 2)
+const config = new CanvasConfig(700, 18, LINE_WIDTH)
 
 ReactDOM.render(
   <App rules={applyRules}

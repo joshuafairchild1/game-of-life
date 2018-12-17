@@ -1,12 +1,25 @@
+$color-background: #bbbbbb;
+$color-primary: #018786;
+$color-secondary: #a8a8a8;
+
 html {
-  background-color: #bbbbbb;
+  background-color: $color-background;
   font-family: 'Roboto', 'sans-serif';
 }
 
-canvas#canvas {
-  padding: 0;
-  margin: 2em auto;
-  display: block;
+div.app-container {
+  margin: 1.5em 0;
+}
+
+div.canvas-wrapper {
+  padding: .6em;
+  color: white;
+  margin: 0 auto;
+  canvas {
+    padding: 0;
+    border: solid 1px black;
+    display: block;
+  }
 }
 
 div.controls {
@@ -23,14 +36,14 @@ div.controls {
     .control-icon {
       font-size: 2em;
       padding: .1em;
-      color: #3f51b5;
+      color: $color-primary;
     }
 
     .control-icon:hover {
-      background-color: rgba(0, 21, 156, 0.17);
+      background-color: rgba(0, 21, 156, 0.1);
       opacity: 50%;
       border-radius: 20%;
-      animation: fadein 1s;
+      animation: fadein .5s;
     }
 
     .control-icon.icon-reset {
@@ -41,12 +54,16 @@ div.controls {
 
     .control-icon.not-allowed {
       cursor: not-allowed;
-      color: grey;
+      color: $color-secondary;
     }
   }
 
   div.control-pattern {
     margin: 1em 0;
+
+    div.control-pattern-input::after {
+      border-bottom-color: $color-primary;
+    }
   }
 
   div.control-generation-interval {
@@ -57,9 +74,14 @@ div.controls {
       position: relative;
       bottom: .5em;
     }
-    input {
-      text-align: center;
-      width: 4em;
+  }
+
+  .control-slider {
+    div div {
+      background-color: $color-secondary;
+    }
+    button {
+      background-color: $color-primary;
     }
   }
 
@@ -98,9 +120,15 @@ div.controls {
   form.control-generation-edit {
     display: inline;
 
-    input {
-      width: 3.5em;
-      text-align: center;
+    div {
+      input {
+        width: 3.5em;
+        text-align: center;
+      }
+    }
+
+    div::after {
+      border-bottom-color: $color-primary;
     }
 
     .icon-check {
@@ -109,7 +137,7 @@ div.controls {
       position: relative;
       padding-left: .2em;
       cursor: pointer;
-      color: #3f51b5;
+      color: $color-primary;
     }
 
     .icon-check:hover {

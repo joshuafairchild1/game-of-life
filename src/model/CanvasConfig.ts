@@ -5,7 +5,6 @@ export default class CanvasConfig {
     approximateLength: number,
     readonly lineSeparation: number,
     readonly lineWidth: number,
-    readonly border: number,
   ) {
     const cellCount = this.cellCount = Math.ceil(approximateLength / lineSeparation)
     this.canvasLength = cellCount * lineSeparation

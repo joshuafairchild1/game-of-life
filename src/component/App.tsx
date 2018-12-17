@@ -9,6 +9,8 @@ import KeyEventContainer from './KeyEventContainer'
 
 import { Rules } from '../Types'
 
+const SPACEBAR_KEY_NAME = ' '
+
 type Props = {
   rules: Rules
   presetPatterns: Pattern[]
@@ -37,7 +39,8 @@ const App: React.FC<Props> = props => {
   const game = useGame({ cellCount, renderInterval, pattern, rules })
   return (
     <KeyEventContainer
-      keyName="  "
+      keyName={SPACEBAR_KEY_NAME}
+      className="app-container"
       onKeyDown={game.togglePlaying}>
       <ControlPanel
         cellCount={cellCount}

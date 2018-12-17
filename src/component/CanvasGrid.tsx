@@ -1,4 +1,5 @@
 import * as React from 'react'
+import Card from '@material-ui/core/Card/Card'
 import CanvasConfig from '../model/CanvasConfig'
 import Grid from '../model/Grid'
 import useCanvasGrid  from './hook/useCanvasGrid'
@@ -8,6 +9,7 @@ type Props = {
   grid: Grid
   onCellClick: (x: number, y: number) => void
 }
+
 const CanvasGrid: React.FC<Props> = ({ grid, configuration, onCellClick }) => {
   const {
     canvasRef,
@@ -27,13 +29,18 @@ const CanvasGrid: React.FC<Props> = ({ grid, configuration, onCellClick }) => {
       }
     }
   }
-  return <canvas
-    ref={canvasRef} id="canvas"
-    width={configuration.canvasLength}
-    height={configuration.canvasLength}
-    onMouseOut={handleCellInteraction(unhighlightActiveCell)}
-    onMouseMove={handleCellInteraction(highlightCell)}
-    onClick={handleCellInteraction(onCellClick)}/>
+  return <Card className="canvas-wrapper" style={{
+      width: configuration.canvasLength,
+      height: configuration.canvasLength
+    }}>
+    <canvas
+      ref={canvasRef}
+      width={configuration.canvasLength}
+      height={configuration.canvasLength}
+      onMouseOut={handleCellInteraction(unhighlightActiveCell)}
+      onMouseMove={handleCellInteraction(highlightCell)}
+      onClick={handleCellInteraction(onCellClick)}/>
+  </Card>
 }
 export default CanvasGrid
 

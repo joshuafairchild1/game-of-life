@@ -5,8 +5,9 @@ import useKeyEffect from './hook/useKeyEffect'
 
 type Props = {
   keyName: string
-  onKeyDown: (event: React.KeyboardEvent) => void
+  onKeyDown: (event: React.KeyboardEvent<HTMLDivElement>) => void
   children: React.ReactNode
+  className?: string
 }
 
 const KeyEventContainer: React.FC<Props> = props => {
@@ -14,8 +15,9 @@ const KeyEventContainer: React.FC<Props> = props => {
   useEffect(() => container && container.current.focus(), [])
   return <div tabIndex={0}
               ref={container}
+              className={props.className || ''}
               style={{ outline: 'none' }}
-              onKeyDown={useKeyEffect(' ', props.onKeyDown)}>
+              onKeyDown={useKeyEffect(props.keyName, props.onKeyDown)}>
     {props.children}
   </div>
 }

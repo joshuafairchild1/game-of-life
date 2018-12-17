@@ -7,14 +7,16 @@ import { useLayoutEffect } from 'react'
 import { Coordinate } from '../../Types'
 
 const BACKGROUND_COLOR = '#eaeaea'
-const HOVER_COLOR = '#A8A8A8'
+const HOVER_COLOR = '#a8a8a8'
+const CELL_COLOR = '#018786'
+
 // not sure why getting these values during useMutationEffect
 // breaks highlighting, so using this for now
 let currentHoveredCellPosition: Coordinate | null = null
 const setHoveredCell = (next: Coordinate) => currentHoveredCellPosition = next
 
 export default function useCanvasGrid(grid: Grid, config: CanvasConfig) {
-  const { lineWidth, lineSeparation, canvasLength, border, cellCount } = config
+  const { lineWidth, lineSeparation, canvasLength, cellCount } = config
   const { canvasRef, context } = useCanvas(lineWidth)
   const withContext = useCanvasContext(context)
   useLayoutEffect(drawGrid, [ grid ])
@@ -54,20 +56,11 @@ export default function useCanvasGrid(grid: Grid, config: CanvasConfig) {
 
   function drawCell(
     positionX: number, positionY: number,
-    color = 'black',
-    withBackground: boolean = true,
+    color = CELL_COLOR,
     withOutline: boolean = false
   ) {
     withContext(({ fillSquare, draw }) => {
-      const borderX = positionX + border
-      const borderY = positionY + border
-      const borderLength = lineSeparation - (border * 2)
-      if (withBackground) {
-        fillSquare(positionX, positionY, lineSeparation, BACKGROUND_COLOR)
-        fillSquare(borderX, borderY, borderLength, color)
-      } else {
-        fillSquare(positionX, positionY, lineSeparation, color)
-      }
+      fillSquare(positionX, positionY, lineSeparation, color)
       if (withOutline) {
         const xPlusOne = positionX + lineSeparation
         const yPlusOne = positionY + lineSeparation
@@ -98,11 +91,11 @@ export default function useCanvasGrid(grid: Grid, config: CanvasConfig) {
     // fill in the current hovered cell before highlighting the next target
     if (currentHoveredCellPosition) {
       const [ hoveredX, hoveredY ] = currentHoveredCellPosition
-      grid.ifDeadCell(hoveredX / lineSeparation, hoveredY / lineSeparation,
-        () => drawCell(hoveredX, hoveredY, BACKGROUND_COLOR, false, true))
+      grid.ifDeadCell(toCellPosition(hoveredX), toCellPosition(hoveredY),
+        () => drawCell(hoveredX, hoveredY, BACKGROUND_COLOR, true))
     }
     grid.ifDeadCell(cellX, cellY, () => {
-      drawCell(posX, posY, color, false, true)
+      drawCell(posX, posY, color, true)
       setHoveredCell([ posX, posY ])
       currentHoveredCellPosition = [ posX, posY ]
     })

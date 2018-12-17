@@ -13,7 +13,8 @@ const PatternPicker: React.FC<Props> = props => {
   const { options } = props
   const onSelect = (event: ChangeEvent<HTMLSelectElement>) =>
     props.onSelect(options.find(it => it.name === event.target.value))
-  return <Select value={props.selected.name}
+  return <Select className="control-pattern-input"
+                 value={props.selected.name}
                  onChange={onSelect}>
     {options.map(({ name }) =>
       <option key={name} value={name}>{name}</option>)}
