@@ -22,11 +22,8 @@ export interface Game {
 }
 
 export type GameConfiguration = {
-  cellCount: DynamicConfigurations['cellCount']
-  renderInterval: DynamicConfigurations['renderInterval']
-  pattern: DynamicConfigurations['pattern']
   rules: Rules
-}
+} & Pick<DynamicConfigurations, 'cellCount' | 'renderInterval' | 'pattern'>
 
 export default function useGame({ rules, ...configuration }: GameConfiguration): Game {
   const renderInterval = configuration.renderInterval.get()
@@ -44,7 +41,9 @@ export default function useGame({ rules, ...configuration }: GameConfiguration):
 
   useEffect(_applyNewPattern, [ pattern ])
 
-  useEffect(_rescheduleNextGeneration, [ renderInterval ])
+  useEffect(() => {
+    isRunning() && _scheduleNextGeneration()
+  }, [ renderInterval ])
 
   const generationIndex = () => {
     const index = generations.findIndex(it => it.id === ref.current.id)
@@ -128,13 +127,13 @@ export default function useGame({ rules, ...configuration }: GameConfiguration):
   function _progressGenerations(targetGenerationIndex: number) {
     const delta = targetGenerationIndex - generationIndex()
     const newGenerations = []
-    let lastNewGeneration = current
+    let mostRecent = current
     for (let i = 0; i < delta; i++) {
-      lastNewGeneration = rules(lastNewGeneration)
-      newGenerations.push(lastNewGeneration)
+      mostRecent = rules(mostRecent)
+      newGenerations.push(mostRecent)
     }
     setGenerations([ ...generations, ...newGenerations ])
-    setCurrent(lastNewGeneration)
+    setCurrent(mostRecent)
   }
 
   function _scheduleNextGeneration() {
@@ -160,12 +159,6 @@ export default function useGame({ rules, ...configuration }: GameConfiguration):
     const newGrid = gridOf(pattern, current.id)
     setCurrent(newGrid)
     setGenerations([ newGrid ])
-  }
-
-  function _rescheduleNextGeneration() {
-    if (renderInterval !== configuration.renderInterval.getPrevious() && isRunning()) {
-      _scheduleNextGeneration()
-    }
   }
 
   return {

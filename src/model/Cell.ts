@@ -1,7 +1,4 @@
-
-export enum Status {
-  Dead, Alive
-}
+import Status from '../Status'
 
 export const isAlive = (cell: Cell) => cell.alive
 export const dead = (cell: Cell) => cell.copy(Status.Dead)
@@ -11,7 +8,8 @@ export default class Cell {
   constructor(
     readonly x: number,
     readonly y: number,
-    readonly status: Status) {
+    readonly status: Status
+  ) {
     Object.freeze(this)
   }
 

@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useRef } from 'react'
 import { useEffect } from 'react'
-import useKeyEffect from './hook/useKeyEffect'
+import keyEventHandler from '../utils'
 
 type Props = {
   keyName: string
@@ -17,7 +17,7 @@ const KeyEventContainer: React.FC<Props> = props => {
               ref={container}
               className={props.className || ''}
               style={{ outline: 'none' }}
-              onKeyDown={useKeyEffect(props.keyName, props.onKeyDown)}>
+              onKeyDown={keyEventHandler(props.keyName, props.onKeyDown)}>
     {props.children}
   </div>
 }

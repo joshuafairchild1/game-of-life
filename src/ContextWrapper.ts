@@ -1,5 +1,3 @@
-
-
 export default class ContextWrapper {
   constructor(
     private readonly context: CanvasRenderingContext2D,
@@ -8,11 +6,19 @@ export default class ContextWrapper {
     context.lineWidth = lineWidth
   }
 
-  withPath(action: () => void) {
+  withPath(operation: () => void) {
     const { context } = this
     context.beginPath()
-    action()
+    operation()
     context.closePath()
+  }
+
+  withLineWidth(width: number, operation: () => void) {
+    const { context } = this
+    const original =  context.lineWidth
+    context.lineWidth = width
+    operation()
+    context.lineWidth = original
   }
 
   draw = (startX: number, startY: number, endX: number, endY: number) => {

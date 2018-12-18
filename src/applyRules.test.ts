@@ -3,8 +3,9 @@
 import 'mocha'
 import { assert } from 'chai'
 import Grid from './model/Grid'
-import Cell, { Status } from './model/Cell'
+import Cell from './model/Cell'
 import applyRules from './applyRules'
+import Status from './Status'
 
 describe('applyRules', function() {
 

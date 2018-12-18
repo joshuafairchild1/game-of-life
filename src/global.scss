@@ -1,5 +1,5 @@
 $color-background: #bbbbbb;
-$color-primary: #018786;
+$color-primary: #1e87f0;
 $color-secondary: #a8a8a8;
 
 html {
@@ -36,7 +36,7 @@ div.controls {
     .control-icon {
       font-size: 2em;
       padding: .1em;
-      color: $color-primary;
+      color: black;
     }
 
     .control-icon:hover {
@@ -142,6 +142,36 @@ div.controls {
 
     .icon-check:hover {
       opacity: .5;
+    }
+  }
+
+  // color picker styles adapted from
+  // https://casesandberg.github.io/react-color/ (last example)
+  div.control-color-swatch {
+    padding: .3em;
+    background: #fff;
+    border-radius: 1px;
+    box-shadow: 0 0 0 1px rgba(0,0,0,.1);
+    display: inline-block;
+    cursor: pointer;
+
+    div {
+      width: 36px;
+      height: 14px;
+      border-radius: 2px
+    }
+  }
+
+  div.control-color-popover {
+    position: relative;
+    z-index: 2;
+
+    div.popover-cover {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
     }
   }
 }

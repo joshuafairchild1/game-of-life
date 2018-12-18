@@ -1,53 +1,35 @@
-import useInterval from './useInterval'
 import { useState } from 'react'
 import { DynamicConfiguration } from '../../Types'
 import Pattern from '../../model/Pattern'
 
 export type DynamicConfigurations = {
-  renderInterval: DynamicConfiguration<number> & { getPrevious: () => number }
+  renderInterval: DynamicConfiguration<number>
   cellCount: DynamicConfiguration<number>
   lineSeparation: DynamicConfiguration<number>
   canvasLength: DynamicConfiguration<number>
   pattern: DynamicConfiguration<Pattern>
+  color: DynamicConfiguration<string>
 }
 
 type Configurations = { [K in keyof DynamicConfigurations]: any }
 
+const define = <T>([ value, set ]: [ T, (value: T) => void ]) =>
+  ({ get: () => value, set })
+
 export default function useDynamicConfigurations<T>(
   initial: Configurations
 ): DynamicConfigurations {
-  const {
-    current: renderInterval, previous: lastRenderInterval, setIntervalState
-  } = useInterval(initial.renderInterval)
   const [ cellCount, setCellCountState ] = useState(initial.cellCount)
-  const [ lineSeparation, setLineSeparation ] = useState(initial.lineSeparation)
-  const [ canvasLength, setCanvasLength ] = useState(initial.canvasLength)
-  const [ pattern, setPattern ] = useState(initial.pattern)
+  const lineSeparation = define(useState(initial.lineSeparation))
   function setCellCount(newValue: number) {
-    setLineSeparation(initial.canvasLength / newValue)
+    lineSeparation.set(initial.canvasLength / newValue)
     setCellCountState(newValue)
   }
   return {
-    renderInterval: {
-      getPrevious: () => lastRenderInterval,
-      get: () => renderInterval,
-      set: setIntervalState
-    },
-    cellCount: {
-      get: () => cellCount,
-      set: setCellCount
-    },
-    lineSeparation: {
-      get: () => lineSeparation,
-      set: setLineSeparation
-    },
-    pattern: {
-      get: () => pattern,
-      set: setPattern
-    },
-    canvasLength: {
-      get: () => canvasLength,
-      set: setCanvasLength
-    }
+    renderInterval: define(useState(initial.renderInterval)),
+    pattern: define(useState(initial.pattern)),
+    canvasLength: define(useState(initial.canvasLength)),
+    color: define(useState(initial.color)),
+    lineSeparation, cellCount: { get: () => cellCount, set: setCellCount }
   }
 }

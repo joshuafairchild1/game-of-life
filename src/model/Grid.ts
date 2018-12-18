@@ -1,6 +1,7 @@
-import Cell, { isAlive, Status } from './Cell'
+import Cell, { isAlive } from './Cell'
 import Pattern from './Pattern'
 import { Coordinate } from '../Types'
+import Status from '../Status'
 
 /**
  *  (0, 0), (1, 0), (2, 0), (3, 0) ...
@@ -42,10 +43,7 @@ export default class Grid {
 
   toggleCell(x: number, y: number) {
     const cell = this.get(x, y)
-    const nextStatus = cell.status === Status.Alive
-      ? Status.Dead : Status.Alive
-    this.set(cell.copy(nextStatus))
-    return nextStatus
+    this.set(cell.copy(Status.inverted(cell.status)))
   }
 
   forEach(predicate: (cell: Cell) => void) {
@@ -80,7 +78,9 @@ export default class Grid {
 
   ifDeadCell(cellX: number, cellY: number, operation: () => void) {
     // noinspection JSSuspiciousNameCombination
-    !this.get(Math.floor(cellX), Math.floor(cellY)).alive && operation()
+    if (!this.get(Math.floor(cellX), Math.floor(cellY)).alive) {
+      operation()
+    }
   }
 
   copyToLength(nextLength: number) {
@@ -126,12 +126,10 @@ export default class Grid {
     for (let x = 0; x < length; x++) {
       const column = grid.addColumn()
       for (let y = 0; y < length; y++) {
-        const isAlive = pattern && pattern.has(x, y)
-        const cell = new Cell(x, y, isAlive ? Status.Alive : Status.Dead)
+        const cell = new Cell(x, y, Status.from(pattern && pattern.has(x, y)))
         column.push(cell)
       }
     }
     return grid
   }
-
 }

@@ -18,23 +18,18 @@ type Props = {
   configuration: CanvasConfig
   interval: number
 }
-/**
- * TODO for resizing
- * - uniform moving around of pattern while fluctuating cell count
- * - adjust borders to keep them proportional to grid size
- * - ensure that stepping generations is robust with changed grid dimensions
- */
 
 const App: React.FC<Props> = props => {
   const { configuration, rules } = props
   const {
-    cellCount, renderInterval, pattern, ...dynamics
+    cellCount, renderInterval, pattern, color, ...dynamics
   } = useDynamicConfigurations({
     lineSeparation: configuration.lineSeparation,
     cellCount: configuration.cellCount,
     canvasLength: configuration.canvasLength,
     renderInterval: props.interval,
-    pattern: props.initialPattern
+    pattern: props.initialPattern,
+    color: configuration.color
   })
   const game = useGame({ cellCount, renderInterval, pattern, rules })
   return (
@@ -47,13 +42,15 @@ const App: React.FC<Props> = props => {
         pattern={pattern}
         renderInterval={renderInterval}
         allPatterns={props.presetPatterns}
+        color={color}
         game={game}/>
       <CanvasGrid
         configuration={{
           ...configuration,
           canvasLength: dynamics.canvasLength.get(),
           lineSeparation: dynamics.lineSeparation.get(),
-          cellCount: cellCount.get()
+          cellCount: cellCount.get(),
+          color: color.get()
         }}
         grid={game.current}
         onCellClick={game.cellClicked}/>

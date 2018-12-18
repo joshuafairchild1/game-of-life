@@ -1,8 +1,10 @@
 'use strict'
+
 import 'mocha'
 import { assert } from 'chai'
-import Cell, { Status } from './Cell'
+import Cell from './Cell'
 import Grid from './Grid'
+import Status from '../Status'
 
 describe('Grid', function() {
 

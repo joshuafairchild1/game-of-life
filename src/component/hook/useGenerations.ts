@@ -1,6 +1,7 @@
 import Grid from '../../model/Grid'
 import { useRef, useState } from 'react'
 
+/** https://github.com/facebook/react/issues/14010 */
 function usePersistentRef<T>(state: T) {
   const ref = useRef(state)
   ref.current = state
@@ -12,7 +13,6 @@ export default function useGenerations(
 ) {
   const [ current, setCurrent ] = useState(initial)
   const [ generations, setGenerations ] = useState([ current ])
-  /** @see https://github.com/facebook/react/issues/14010 */
   const currentRef = usePersistentRef(current)
   const generationsRef = usePersistentRef(generations)
 

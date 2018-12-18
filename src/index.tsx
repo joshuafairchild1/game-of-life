@@ -12,7 +12,8 @@ import './global.scss'
 
 const GENERATION_INTERVAL = 50
 const LINE_WIDTH = 1
-const config = new CanvasConfig(700, 18, LINE_WIDTH)
+const DEFAULT_PRIMARY_COLOR = '#1e87f0'
+const config = new CanvasConfig(700, 18, LINE_WIDTH, DEFAULT_PRIMARY_COLOR)
 
 ReactDOM.render(
   <App rules={applyRules}

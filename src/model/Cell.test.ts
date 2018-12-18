@@ -2,7 +2,8 @@
 
 import 'mocha'
 import { assert } from 'chai'
-import Cell, { Status } from './Cell'
+import Cell from './Cell'
+import Status from '../Status'
 
 describe('Cell', function() {
 
