@@ -2,6 +2,7 @@ import * as React from 'react'
 import { Save } from '@material-ui/icons'
 import { useState } from 'react'
 import { Button, Card, Input, Modal } from '@material-ui/core'
+import Pattern from '../Pattern'
 
 type Props = {
   modalOpen: boolean
@@ -9,7 +10,8 @@ type Props = {
   onSave: (patternName: string) => void
 }
 
-// TODO: simple form validation, ensure unique pattern names
+const isUniqueName = (name: string) =>
+  Pattern.known.every(it => it.name !== name)
 
 const SaveCurrentPattern: React.FC<Props> = props => {
   const [ patternName, setPatternName ] = useState('')
@@ -27,7 +29,7 @@ const SaveCurrentPattern: React.FC<Props> = props => {
         <label>Pattern Name</label>
         <form onSubmit={event => {
           event.preventDefault()
-          if (patternName) {
+          if (patternName && isUniqueName(patternName)) {
             hideModal()
             props.onSave(patternName)
             setPatternName('')
@@ -37,6 +39,10 @@ const SaveCurrentPattern: React.FC<Props> = props => {
                  onChange={event => setPatternName(event.target.value)}/>
           <Button>Save</Button>
         </form>
+        {!isUniqueName(patternName) &&
+        <small className="warn-text">
+          A pattern with this name already exists
+        </small>}
       </Card>
     </Modal>
   </>
