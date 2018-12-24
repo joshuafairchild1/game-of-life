@@ -2,7 +2,7 @@
 
 import 'mocha'
 import { assert } from 'chai'
-import Grid from './model/Grid'
+import Grid from './Grid'
 import Cell from './model/Cell'
 import applyRules from './applyRules'
 import Status from './Status'

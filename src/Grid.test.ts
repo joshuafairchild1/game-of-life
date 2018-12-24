@@ -1,10 +1,10 @@
 'use strict'
-
 import 'mocha'
 import { assert } from 'chai'
-import Cell from './Cell'
+import Cell from './model/Cell'
 import Grid from './Grid'
-import Status from '../Status'
+import Status from './Status'
+import Pattern from './Pattern'
 
 describe('Grid', function() {
 
@@ -35,22 +35,21 @@ describe('Grid', function() {
   it('gets neighboring cells', function () {
     const targetCell = new Cell(5, 5, Status.Alive)
     const upperCenter = new Cell(5, 4, Status.Alive)
-    const lowerRight = new Cell(6, 6, Status.Dead)
-    const [ upperLeft, ...others ] = [
+    uut.set(targetCell)
+    uut.set(upperCenter)
+    const [ upperLeft, lowerRight, ...others ] = [
+      new Cell(6, 6, Status.Dead),
       new Cell(4, 4, Status.Dead),
       new Cell(6, 4, Status.Dead),
       new Cell(4, 5, Status.Dead),
-      new Cell(6,5, Status.Dead),
+      new Cell(6, 5, Status.Dead),
       new Cell(4, 6, Status.Dead),
       new Cell(5, 6, Status.Dead)
     ]
-    uut.set(targetCell)
-    uut.set(upperCenter)
-    uut.set(lowerRight)
     const neighbors = uut.neighbors(targetCell)
     assert.deepEqual(
       neighbors,
-      [ upperLeft, upperCenter, ...others, lowerRight ]
+      [ lowerRight, upperCenter, ...others, upperLeft ]
     )
   })
 
@@ -61,6 +60,34 @@ describe('Grid', function() {
     assert.isTrue(uut.get(cell.x, cell.y).status === Status.Dead)
     uut.toggleCell(cell.x, cell.y)
     assert.isTrue(uut.get(cell.x, cell.y).status === Status.Alive)
+  })
+
+  it('toPattern', function() {
+    const patternName = 'pattern'
+    const pattern = new Pattern(patternName, [ [ 0, 0 ], [ 0, 1 ] ])
+    const withPattern = Grid.createWithLength(5, 0, pattern)
+    assert.deepEqual(withPattern.toPattern(patternName), pattern)
+  })
+
+  it('ifDeadCell', function(done) {
+    const deadCell = new Cell(0, 0, Status.Dead)
+    const livingCell = new Cell(1, 0, Status.Alive)
+    uut.set(deadCell)
+    uut.set(livingCell)
+    uut.ifDeadCell(livingCell.x, livingCell.y, () => {
+      throw Error('test failed')
+    })
+    uut.ifDeadCell(deadCell.x, deadCell.y, done)
+    throw Error('test failed')
+  })
+
+  it('copy', function() {
+    const originalId = uut.id
+    const copy = uut.copy
+    ;(<any>uut)['id']++
+    uut.set(new Cell(0, 0, Status.Alive))
+    assert.equal(copy.id, originalId)
+    assert.isFalse(copy.get(0, 0).alive)
   })
 
 })

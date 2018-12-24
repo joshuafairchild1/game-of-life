@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { DynamicConfiguration } from '../../Types'
-import Pattern from '../../model/Pattern'
+import Pattern from '../../Pattern'
 
 export type DynamicConfigurations = {
   renderInterval: DynamicConfiguration<number>

@@ -1,7 +1,7 @@
 import * as React from 'react'
 import Card from '@material-ui/core/Card/Card'
 import CanvasConfig from '../model/CanvasConfig'
-import Grid from '../model/Grid'
+import Grid from '../Grid'
 import useCanvasGrid  from './hook/useCanvasGrid'
 
 type Props = {

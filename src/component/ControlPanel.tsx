@@ -1,11 +1,12 @@
 import * as React from 'react'
 import PatternPicker from './PatternPicker'
-import Pattern from '../model/Pattern'
+import Pattern from '../Pattern'
 import Direction from '../Direction'
 import Card from '@material-ui/core/Card/Card'
 import GenerationInput from './GenerationInput'
 import Slider from '@material-ui/lab/Slider/Slider'
 import ColorPicker from './ColorPicker'
+import SaveCurrentPattern from './SaveCurrentPattern'
 
 import { Pause, PlayArrow, Replay, SkipNext, SkipPrevious } from '@material-ui/icons'
 import { Game } from './hook/useGame'
@@ -19,6 +20,7 @@ type Props = {
   pattern: DynamicConfiguration<Pattern>
   renderInterval: DynamicConfiguration<number>
   color: DynamicConfiguration<string>
+  savePattern: () => void
 }
 
 const CELLS_MIN = 3
@@ -83,6 +85,7 @@ const ControlPanel: React.FC<Props> = props => {
       </div>
     </div>
     <ColorPicker color={props.color}/>
+    <SaveCurrentPattern onSave={props.savePattern}/>
   </Card>
 }
 

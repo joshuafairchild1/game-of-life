@@ -4,8 +4,9 @@ import ControlPanel from './ControlPanel'
 import CanvasConfig from '../model/CanvasConfig'
 import useGame from './hook/useGame'
 import useDynamicConfigurations from './hook/useDynamicConfigurations'
-import Pattern from '../model/Pattern'
-import KeyEventContainer from './KeyEventContainer'
+import Pattern from '../Pattern'
+import KeyDownListener from './KeyDownListener'
+import saveKeyHandler from './saveKeyHandler'
 
 import { Rules } from '../Types'
 
@@ -17,6 +18,7 @@ type Props = {
   initialPattern: Pattern
   configuration: CanvasConfig
   interval: number
+  savePattern: (pattern: Pattern) => void
 }
 
 const App: React.FC<Props> = props => {
@@ -32,14 +34,20 @@ const App: React.FC<Props> = props => {
     color: configuration.color
   })
   const game = useGame({ cellCount, renderInterval, pattern, rules })
+  const saveGridAsPattern = (name: string = Math.random().toString()) => {
+    props.savePattern(game.current.toPattern(name))
+    alert(`Pattern saved: ${name}`)
+  }
   return (
-    <KeyEventContainer
-      keyName={SPACEBAR_KEY_NAME}
-      className="app-container"
-      onKeyDown={game.togglePlaying}>
+    <KeyDownListener className="app-container"
+      handlers={[
+        { keyName: SPACEBAR_KEY_NAME, onKeyDown: game.togglePlaying },
+        { keyName: 's', onKeyDown: saveKeyHandler(saveGridAsPattern)  }
+      ]}>
       <ControlPanel
         cellCount={cellCount}
         pattern={pattern}
+        savePattern={saveGridAsPattern}
         renderInterval={renderInterval}
         allPatterns={props.presetPatterns}
         color={color}
@@ -54,7 +62,7 @@ const App: React.FC<Props> = props => {
         }}
         grid={game.current}
         onCellClick={game.cellClicked}/>
-    </KeyEventContainer>
+    </KeyDownListener>
   )
 }
 export default App

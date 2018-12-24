@@ -1,4 +1,4 @@
-import Grid from './model/Grid'
+import Grid from './Grid'
 import { alive, dead } from './model/Cell'
 
 export default function applyRules(current: Grid) {

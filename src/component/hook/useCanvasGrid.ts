@@ -1,5 +1,5 @@
 import CanvasConfig from '../../model/CanvasConfig'
-import Grid from '../../model/Grid'
+import Grid from '../../Grid'
 import useCanvas from './useCanvas'
 
 import { useLayoutEffect, useRef } from 'react'

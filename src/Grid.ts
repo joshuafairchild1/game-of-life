@@ -1,7 +1,7 @@
-import Cell, { isAlive } from './Cell'
+import Cell, { isAlive } from './model/Cell'
 import Pattern from './Pattern'
-import { Coordinate } from '../Types'
-import Status from '../Status'
+import { Coordinate } from './Types'
+import Status from './Status'
 
 /**
  *  (0, 0), (1, 0), (2, 0), (3, 0) ...
@@ -13,12 +13,20 @@ import Status from '../Status'
  */
 
 export default class Grid {
-  private constructor(private readonly grid: Array<Cell[]> = [], readonly id: number) {
+  private constructor(
+    private readonly grid: Array<Cell[]> = [],
+    readonly id: number
+  ) {
     this.isWithinBounds = this.isWithinBounds.bind(this)
   }
 
   get length() {
     return this.grid.length
+  }
+
+  get copy() {
+    const copy = this.grid.map(column => [...column])
+    return new Grid(copy, this.id)
   }
 
   addColumn() {
@@ -78,7 +86,8 @@ export default class Grid {
 
   ifDeadCell(cellX: number, cellY: number, operation: () => void) {
     // noinspection JSSuspiciousNameCombination
-    if (!this.get(Math.floor(cellX), Math.floor(cellY)).alive) {
+    if (this.isWithinBounds([ cellX, cellY ])
+      && !this.get(Math.floor(cellX), Math.floor(cellY)).alive) {
       operation()
     }
   }
@@ -104,8 +113,12 @@ export default class Grid {
     return copy
   }
 
-  get copy() {
-    return new Grid(this.grid, this.id)
+  toPattern(name: string) {
+    const living = this.grid
+      .reduce((all, column) => [...all, ...column], [])
+      .filter(isAlive)
+      .map<Coordinate>(({ x, y }) => [ x, y ])
+    return new Pattern(name, living)
   }
 
   private getColumn(index: number): Cell[] {
