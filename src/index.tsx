@@ -20,6 +20,8 @@ const config = new CanvasConfig(700, 18, LINE_WIDTH, DEFAULT_PRIMARY_COLOR)
 const storedPatterns = new LocalStorageItem('STORED_PATTERNS', parseStoredPatterns)
 // invoking the parsing strategy so that stored patterns are loaded before
 storedPatterns.get()
+const storePattern = (newPattern: Pattern) =>
+  storedPatterns.set([ ...(storedPatterns.get() || []), newPattern ])
 
 ReactDOM.render(
   <App rules={applyRules}
@@ -27,7 +29,6 @@ ReactDOM.render(
        presetPatterns={Pattern.known}
        configuration={config}
        interval={GENERATION_INTERVAL}
-       savePattern={newPattern =>
-         storedPatterns.set([ ...(storedPatterns.get() || []), newPattern ])}/>,
+       persistPattern={storePattern}/>,
   document.getElementById('root')
 )

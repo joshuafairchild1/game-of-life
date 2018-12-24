@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { useState } from 'react'
 import CanvasGrid from './CanvasGrid'
 import ControlPanel from './ControlPanel'
 import CanvasConfig from '../model/CanvasConfig'
@@ -7,18 +8,19 @@ import useDynamicConfigurations from './hook/useDynamicConfigurations'
 import Pattern from '../Pattern'
 import KeyDownListener from './KeyDownListener'
 import saveKeyHandler from './saveKeyHandler'
+import usePatterns from './hook/usePatterns'
+import PatternSavedNotification from './PatternSavedNotification'
 
 import { Rules } from '../Types'
 
 const SPACEBAR_KEY_NAME = ' '
-
 type Props = {
   rules: Rules
   presetPatterns: Pattern[]
   initialPattern: Pattern
   configuration: CanvasConfig
   interval: number
-  savePattern: (pattern: Pattern) => void
+  persistPattern: (pattern: Pattern) => void
 }
 
 const App: React.FC<Props> = props => {
@@ -33,23 +35,38 @@ const App: React.FC<Props> = props => {
     pattern: props.initialPattern,
     color: configuration.color
   })
+  const [ savePatternModalOpen, setSavePatternModalOpen ] = useState(false)
+  const [ recentlySavedPattern, setRecentlySavedPattern ]
+    = useState<Pattern | null>(null)
+  const [ showPatternSaveNotification, setShowPatternSaveNotification ]
+    = useState(false)
   const game = useGame({ cellCount, renderInterval, pattern, rules })
-  const saveGridAsPattern = (name: string = Math.random().toString()) => {
-    props.savePattern(game.current.toPattern(name))
-    alert(`Pattern saved: ${name}`)
+  const [ patterns, addPattern ] = usePatterns(props.presetPatterns)
+  const saveGridAsPattern = (name: string) => {
+    const newPattern = game.current.toPattern(name)
+    props.persistPattern(newPattern)
+    addPattern(newPattern)
+    setRecentlySavedPattern(newPattern)
+    setShowPatternSaveNotification(true)
   }
+  const keyDownHandlers = [ {
+    keyName: 's',
+    onKeyDown: saveKeyHandler(() => setSavePatternModalOpen(true))
+  }, {
+    keyName: SPACEBAR_KEY_NAME, onKeyDown: game.togglePlaying
+  }]
   return (
-    <KeyDownListener className="app-container"
-      handlers={[
-        { keyName: SPACEBAR_KEY_NAME, onKeyDown: game.togglePlaying },
-        { keyName: 's', onKeyDown: saveKeyHandler(saveGridAsPattern)  }
-      ]}>
+    <KeyDownListener
+      className="app-container"
+      handlers={savePatternModalOpen ? [] : keyDownHandlers}>
       <ControlPanel
         cellCount={cellCount}
         pattern={pattern}
         savePattern={saveGridAsPattern}
+        savePatternModalOpen={savePatternModalOpen}
+        setSavePatternModalOpen={setSavePatternModalOpen}
         renderInterval={renderInterval}
-        allPatterns={props.presetPatterns}
+        allPatterns={patterns}
         color={color}
         game={game}/>
       <CanvasGrid
@@ -62,7 +79,15 @@ const App: React.FC<Props> = props => {
         }}
         grid={game.current}
         onCellClick={game.cellClicked}/>
+      <PatternSavedNotification
+        open={showPatternSaveNotification}
+        hide={() => {
+          setShowPatternSaveNotification(false)
+          setRecentlySavedPattern(null)
+        }}
+        patternName={recentlySavedPattern && recentlySavedPattern.name}/>
     </KeyDownListener>
   )
 }
+
 export default App

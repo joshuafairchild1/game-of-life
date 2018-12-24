@@ -9,8 +9,9 @@ type Props = {
 
 const ColorPicker: React.FC<Props> = props => {
   const [ showPicker, setShowPicker ] = useState(false)
-  return <React.Fragment>
+  return <>
     <div className="control-color-swatch"
+         title="Choose Color"
          onClick={() => setShowPicker(true)}>
       <div style={{ background: props.color.get() }}/>
     </div>
@@ -22,7 +23,7 @@ const ColorPicker: React.FC<Props> = props => {
         color={props.color.get()}
         onChange={({ hex }) => props.color.set(hex)}/>
     </div>}
-  </React.Fragment>
+  </>
 }
 
 export default ColorPicker

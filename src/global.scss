@@ -1,6 +1,7 @@
 $color-background: #bbbbbb;
 $color-primary: #1e87f0;
 $color-secondary: #a8a8a8;
+$color-hover-effect: rgba(0, 21, 156, 0.15);
 
 html {
   background-color: $color-background;
@@ -40,7 +41,7 @@ div.controls {
     }
 
     .control-icon:hover {
-      background-color: rgba(0, 21, 156, 0.1);
+      background-color: $color-hover-effect;
       opacity: 50%;
       border-radius: 20%;
       animation: fadein .5s;
@@ -145,34 +146,73 @@ div.controls {
     }
   }
 
-  // color picker styles adapted from
-  // https://casesandberg.github.io/react-color/ (last example)
-  div.control-color-swatch {
-    padding: .3em;
-    background: #fff;
-    border-radius: 1px;
-    box-shadow: 0 0 0 1px rgba(0,0,0,.1);
-    display: inline-block;
-    cursor: pointer;
+  div.lower-controls-container {
+    display: flex;
+    justify-content: space-between;
 
-    div {
-      width: 36px;
+    // color picker styles adapted from
+    // https://casesandberg.github.io/react-color/ (last example)
+    div.control-color-swatch {
+      padding: .3em;
+      background: #fff;
+      border-radius: 1px;
+      box-shadow: 0 0 0 1px rgba(0,0,0,.1);
+      display: inline-block;
+      cursor: pointer;
       height: 14px;
-      border-radius: 2px
+      margin: .25em;
+
+      div {
+        height: inherit;
+        width: 36px;
+        border-radius: 2px
+      }
+    }
+
+    div.control-color-popover {
+      position: fixed;
+      left: 6em;
+
+      div.popover-cover {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+      }
+    }
+
+    svg.save-icon {
+      cursor: pointer;
+      border-radius: 1em;
+      padding: .2em;
+    }
+
+    svg.save-icon:hover {
+      background: $color-hover-effect;
     }
   }
 
-  div.control-color-popover {
-    position: relative;
-    z-index: 2;
+}
 
-    div.popover-cover {
-      position: fixed;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-    }
+div.save-pattern-dialog {
+  padding: 1em;
+  width: auto;
+  outline: none;
+  display: inline-block;
+  position: relative;
+  top: 30%;
+
+  form div:after {
+    border-bottom: 2px solid $color-primary;
+  }
+
+  button {
+    margin-left: .3em;
+  }
+
+  button:hover {
+    background-color: $color-hover-effect;
   }
 }
 

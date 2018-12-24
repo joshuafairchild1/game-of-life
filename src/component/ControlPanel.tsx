@@ -20,7 +20,9 @@ type Props = {
   pattern: DynamicConfiguration<Pattern>
   renderInterval: DynamicConfiguration<number>
   color: DynamicConfiguration<string>
-  savePattern: () => void
+  savePattern: (name: string) => void
+  savePatternModalOpen: boolean
+  setSavePatternModalOpen: (isOpen: boolean) => void
 }
 
 const CELLS_MIN = 3
@@ -84,8 +86,13 @@ const ControlPanel: React.FC<Props> = props => {
         <small className="cell-count-max">&nbsp; {CELLS_MAX}</small>
       </div>
     </div>
-    <ColorPicker color={props.color}/>
-    <SaveCurrentPattern onSave={props.savePattern}/>
+    <div className="lower-controls-container">
+      <ColorPicker color={props.color}/>
+      <SaveCurrentPattern
+        modalOpen={props.savePatternModalOpen}
+        setModalOpen={props.setSavePatternModalOpen}
+        onSave={props.savePattern}/>
+    </div>
   </Card>
 }
 
