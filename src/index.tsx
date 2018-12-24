@@ -1,11 +1,11 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import App from './component/App'
-import applyRules from './applyRules'
-import CanvasConfig from './model/CanvasConfig'
-import Pattern from './Pattern'
+import applyRules from './game/applyRules'
+import CanvasConfig from './component/model/CanvasConfig'
+import Pattern from './game/Pattern'
 import LocalStorageItem from './LocalStorageItem'
-import patterns from './patterns'
+import patterns from './game/patterns'
 import parseStoredPatterns from './parseStoredPatterns'
 
 import './global.scss'
@@ -18,10 +18,11 @@ const LINE_WIDTH = 1
 const DEFAULT_PRIMARY_COLOR = '#1e87f0'
 const config = new CanvasConfig(700, 18, LINE_WIDTH, DEFAULT_PRIMARY_COLOR)
 const storedPatterns = new LocalStorageItem('STORED_PATTERNS', parseStoredPatterns)
-// invoking the parsing strategy so that stored patterns are loaded before
-storedPatterns.get()
 const storePattern = (newPattern: Pattern) =>
   storedPatterns.set([ ...(storedPatterns.get() || []), newPattern ])
+// invoking the parsing strategy here so that stored
+// patterns are loaded before the component tree mounts
+storedPatterns.get()
 
 ReactDOM.render(
   <App rules={applyRules}

@@ -1,4 +1,4 @@
-import { Coordinate } from './Types'
+import { Coordinate } from '../Types'
 
 export default class Pattern {
 

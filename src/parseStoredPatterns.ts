@@ -1,4 +1,4 @@
-import Pattern from './Pattern'
+import Pattern from './game/Pattern'
 
 export default function parseStoredPatterns(stored: any) {
   if (!Array.isArray(stored)) {

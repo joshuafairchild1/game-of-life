@@ -2,10 +2,10 @@ import * as React from 'react'
 import { useState } from 'react'
 import CanvasGrid from './CanvasGrid'
 import ControlPanel from './ControlPanel'
-import CanvasConfig from '../model/CanvasConfig'
+import CanvasConfig from './model/CanvasConfig'
 import useGame from './hook/useGame'
 import useDynamicConfigurations from './hook/useDynamicConfigurations'
-import Pattern from '../Pattern'
+import Pattern from '../game/Pattern'
 import KeyDownListener from './KeyDownListener'
 import saveKeyHandler from './saveKeyHandler'
 import usePatterns from './hook/usePatterns'
@@ -14,6 +14,7 @@ import PatternSavedNotification from './PatternSavedNotification'
 import { Rules } from '../Types'
 
 const SPACEBAR_KEY_NAME = ' '
+
 type Props = {
   rules: Rules
   presetPatterns: Pattern[]
@@ -36,6 +37,12 @@ const App: React.FC<Props> = props => {
     color: configuration.color
   })
   const [ savePatternModalOpen, setSavePatternModalOpen ] = useState(false)
+  const setPatternModalOpen = (isOpen: boolean) => {
+    if (isOpen) {
+      game.pause()
+    }
+    setSavePatternModalOpen(isOpen)
+  }
   const [ recentlySavedPattern, setRecentlySavedPattern ]
     = useState<Pattern | null>(null)
   const [ showPatternSaveNotification, setShowPatternSaveNotification ]
@@ -51,7 +58,7 @@ const App: React.FC<Props> = props => {
   }
   const keyDownHandlers = [ {
     keyName: 's',
-    onKeyDown: saveKeyHandler(() => setSavePatternModalOpen(true))
+    onKeyDown: saveKeyHandler(() => setPatternModalOpen(true))
   }, {
     keyName: SPACEBAR_KEY_NAME, onKeyDown: game.togglePlaying
   }]
@@ -64,7 +71,7 @@ const App: React.FC<Props> = props => {
         pattern={pattern}
         savePattern={saveGridAsPattern}
         savePatternModalOpen={savePatternModalOpen}
-        setSavePatternModalOpen={setSavePatternModalOpen}
+        setSavePatternModalOpen={setPatternModalOpen}
         renderInterval={renderInterval}
         allPatterns={patterns}
         color={color}

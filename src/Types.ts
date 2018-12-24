@@ -1,4 +1,4 @@
-import Grid from './Grid'
+import Grid from './game/Grid'
 import { KeyEvent } from './utils'
 
 export type Coordinate = [ number, number ]

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import PatternPicker from './PatternPicker'
-import Pattern from '../Pattern'
+import Pattern from '../game/Pattern'
 import Direction from '../Direction'
 import Card from '@material-ui/core/Card/Card'
 import GenerationInput from './GenerationInput'

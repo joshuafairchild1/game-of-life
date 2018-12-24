@@ -1,4 +1,4 @@
-import Pattern from '../../Pattern'
+import Pattern from '../../game/Pattern'
 import { useState } from 'react'
 
 export default function usePatterns(

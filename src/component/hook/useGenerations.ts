@@ -1,4 +1,4 @@
-import Grid from '../../Grid'
+import Grid from '../../game/Grid'
 import { useRef, useState } from 'react'
 
 /** https://github.com/facebook/react/issues/14010 */

@@ -4,7 +4,7 @@ import 'mocha'
 import { assert } from 'chai'
 
 import Pattern from './Pattern'
-import { Coordinate } from './Types'
+import { Coordinate } from '../Types'
 
 describe('Pattern', function() {
 

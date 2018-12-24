@@ -1,6 +1,6 @@
-import Grid from '../../Grid'
+import Grid from '../../game/Grid'
 import useGenerations from './useGenerations'
-import Pattern from '../../Pattern'
+import Pattern from '../../game/Pattern'
 import Direction from '../../Direction'
 
 import { Rules } from '../../Types'

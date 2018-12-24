@@ -1,5 +1,5 @@
 import * as React from 'react'
-import Pattern from '../Pattern'
+import Pattern from '../game/Pattern'
 import { Select } from '@material-ui/core'
 
 type Props = {

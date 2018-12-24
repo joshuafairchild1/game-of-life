@@ -1,8 +1,8 @@
 import * as React from 'react'
-import { Save } from '@material-ui/icons'
 import { useState } from 'react'
+import { Save } from '@material-ui/icons'
 import { Button, Card, Input, Modal } from '@material-ui/core'
-import Pattern from '../Pattern'
+import Pattern from '../game/Pattern'
 
 type Props = {
   modalOpen: boolean
