@@ -67,7 +67,7 @@ div.controls {
     margin: 1em 0;
 
     div.control-pattern-input::after {
-      border-bottom-color: $color-primary;
+      border-bottom-color: black;
     }
   }
 
@@ -133,7 +133,7 @@ div.controls {
     }
 
     div::after {
-      border-bottom-color: $color-primary;
+      border-bottom-color: black;
     }
 
     .icon-check {
@@ -142,7 +142,7 @@ div.controls {
       position: relative;
       padding-left: .2em;
       cursor: pointer;
-      color: $color-primary;
+      color: black;
     }
 
     .icon-check:hover {
@@ -208,7 +208,7 @@ div.save-pattern-dialog {
   top: 30%;
 
   form div:after {
-    border-bottom: 2px solid $color-primary;
+    border-bottom: 2px solid black;
   }
 
   button {
@@ -217,6 +217,10 @@ div.save-pattern-dialog {
 
   button:hover {
     background-color: $color-hover-effect;
+  }
+
+  form {
+    margin-bottom: 0.5em;
   }
 }
 

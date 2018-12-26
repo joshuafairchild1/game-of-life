@@ -28,3 +28,8 @@ export default function keyEventHandler<T = {}>(
     }
   }
 }
+
+export function stopEvent(event: { stopPropagation: VoidFunction }) {
+  event.stopPropagation()
+  return true
+}

@@ -10,8 +10,10 @@ import KeyDownListener from './KeyDownListener'
 import saveKeyHandler from './saveKeyHandler'
 import usePatterns from './hook/usePatterns'
 import PatternSavedNotification from './PatternSavedNotification'
+import allPatterns  from '../game/patterns'
 
 import { Rules } from '../Types'
+import PatternStorage from '../PatternStorage'
 
 const SPACEBAR_KEY_NAME = ' '
 
@@ -21,7 +23,9 @@ type Props = {
   initialPattern: Pattern
   configuration: CanvasConfig
   interval: number
-  persistPattern: (pattern: Pattern) => void
+  storage: PatternStorage
+  // persistPattern: (pattern: Pattern) => void
+  // deletePattern: (pattern: Pattern) => void
 }
 
 const App: React.FC<Props> = props => {
@@ -48,10 +52,10 @@ const App: React.FC<Props> = props => {
   const [ showPatternSaveNotification, setShowPatternSaveNotification ]
     = useState(false)
   const game = useGame({ cellCount, renderInterval, pattern, rules })
-  const [ patterns, addPattern ] = usePatterns(props.presetPatterns)
+  const { patterns, addPattern, removePattern } = usePatterns(props.presetPatterns)
   const saveGridAsPattern = (name: string) => {
     const newPattern = game.current.toPattern(name)
-    props.persistPattern(newPattern)
+    props.storage.save(newPattern)
     addPattern(newPattern)
     setRecentlySavedPattern(newPattern)
     setShowPatternSaveNotification(true)
@@ -67,6 +71,11 @@ const App: React.FC<Props> = props => {
       className="app-container"
       handlers={savePatternModalOpen ? [] : keyDownHandlers}>
       <ControlPanel
+        deletePattern={toDelete => {
+          props.storage.delete(toDelete)
+          removePattern(toDelete)
+          pattern.set(allPatterns.Empty)
+        }}
         cellCount={cellCount}
         pattern={pattern}
         savePattern={saveGridAsPattern}
@@ -87,7 +96,7 @@ const App: React.FC<Props> = props => {
         grid={game.current}
         onCellClick={game.cellClicked}/>
       <PatternSavedNotification
-        open={showPatternSaveNotification}
+        isShowing={showPatternSaveNotification}
         hide={() => {
           setShowPatternSaveNotification(false)
           setRecentlySavedPattern(null)

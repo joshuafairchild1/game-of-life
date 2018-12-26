@@ -9,6 +9,7 @@ import patterns from './game/patterns'
 import parseStoredPatterns from './parseStoredPatterns'
 
 import './global.scss'
+import PatternStorage from './PatternStorage'
 
 // https://material-ui.com/style/typography/#migration-to-typography-v2
 (window as any).__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true
@@ -17,12 +18,12 @@ const GENERATION_INTERVAL = 50
 const LINE_WIDTH = 1
 const DEFAULT_PRIMARY_COLOR = '#1e87f0'
 const config = new CanvasConfig(700, 18, LINE_WIDTH, DEFAULT_PRIMARY_COLOR)
-const storedPatterns = new LocalStorageItem('STORED_PATTERNS', parseStoredPatterns)
-const storePattern = (newPattern: Pattern) =>
-  storedPatterns.set([ ...(storedPatterns.get() || []), newPattern ])
+const storedPatterns =
+  new LocalStorageItem<Pattern[]>('STORED_PATTERNS', parseStoredPatterns)
 // invoking the parsing strategy here so that stored
 // patterns are loaded before the component tree mounts
 storedPatterns.get()
+const storage = new PatternStorage(storedPatterns)
 
 ReactDOM.render(
   <App rules={applyRules}
@@ -30,6 +31,6 @@ ReactDOM.render(
        presetPatterns={Pattern.known}
        configuration={config}
        interval={GENERATION_INTERVAL}
-       persistPattern={storePattern}/>,
+       storage={storage}/>,
   document.getElementById('root')
 )

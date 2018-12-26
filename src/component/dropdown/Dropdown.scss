@@ -1,0 +1,54 @@
+@import './../../global.scss';
+
+.selected {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  line-height: 18px;
+  border-bottom: 1px solid $color-secondary;
+  cursor: pointer;
+
+  &:hover {
+    border-color: transparent;
+    box-shadow: 0 2px 0 0 black;
+  }
+
+  div {
+    font-weight: 400;
+  }
+}
+
+ul.options {
+  z-index: 3;
+  border: 1px solid rgb(223, 223, 223);
+  border-top: none;
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+  background-color: white;
+  box-shadow: -2px 6px 13px -6px rgba(0,0,0,0.75);
+  padding: 0;
+  margin: 0;
+  position: fixed;
+  display: inline-grid;
+
+  li {
+    padding: 8px 10px;
+    white-space: nowrap;
+    display: flex;
+    justify-content: space-between;
+
+    &.selected-item {
+      background-color: rgba(0, 0, 0, 0.14);
+    }
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.08);
+    }
+
+    svg {
+      top: -3px;
+      position: relative;
+      cursor: pointer;
+    }
+  }
+}

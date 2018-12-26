@@ -4,7 +4,8 @@ export default class Pattern {
 
   constructor(
     public readonly name: string,
-    private readonly coordinates: Coordinate[]
+    private readonly coordinates: Coordinate[],
+    public readonly canDelete: boolean = true
   ) {
     Pattern.register(this)
   }
@@ -34,9 +35,22 @@ export default class Pattern {
       && typeof asPattern.name === 'string'
   }
 
+  static delete(pattern: Pattern) {
+    Pattern.registry.delete(pattern.name)
+  }
+
+  static forName(name: string) {
+    const pattern = Pattern.registry.get(name)
+    if (!pattern) {
+      throw Error(`no pattern with name: ${name}`)
+    }
+    return pattern
+  }
+
   private static register(pattern: Pattern) {
     Pattern.registry.set(pattern.name, pattern)
   }
 
   private static registry = new Map<string, Pattern>()
+
 }

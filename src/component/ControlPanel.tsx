@@ -23,6 +23,7 @@ type Props = {
   savePattern: (name: string) => void
   savePatternModalOpen: boolean
   setSavePatternModalOpen: (isOpen: boolean) => void
+  deletePattern: (pattern: Pattern) => void
 }
 
 const CELLS_MIN = 3
@@ -63,7 +64,8 @@ const ControlPanel: React.FC<Props> = props => {
           pattern.set(newPattern)
         }}
         options={props.allPatterns}
-        selected={pattern.get()}/>
+        selected={pattern.get()}
+        deletePattern={props.deletePattern}/>
     </div>
     <small>Current generation:&nbsp;</small>
     <GenerationInput

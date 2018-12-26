@@ -1,21 +1,21 @@
 import Pattern from './Pattern'
 
 const patterns = {
-  Blinker: new Pattern('Blinker', [ [ 20, 25 ], [ 20, 26 ], [ 20, 27 ] ]),
+  Blinker: new Pattern('Blinker', [ [ 20, 25 ], [ 20, 26 ], [ 20, 27 ] ], false),
 
   Spaceship: new Pattern('Spaceship', [
     [ 30, 35 ], [ 28, 36 ], [ 32, 36 ], [ 27, 37 ], [ 27, 38 ], [ 32, 38 ],
     [ 27, 39 ], [ 28, 39 ], [ 29, 39 ], [ 30, 39 ], [ 31, 39 ]
-  ]),
+  ], false),
 
   Glider: new Pattern('Glider', [
     [ 10, 10 ], [ 11, 11 ], [ 9, 12 ], [ 10, 12 ], [ 11, 12 ]
-  ]),
+  ], false),
 
   TenHorizontal: new Pattern('Horizontal Bar', [
     [ 20, 25 ], [ 21, 25 ], [ 22, 25 ], [ 23, 25 ], [ 24, 25 ], [ 25, 25 ],
     [ 26, 25 ], [ 27, 25 ], [ 28, 25 ], [ 29, 25 ], [ 30, 25 ]
-  ]),
+  ], false),
 
   GosperGliderGun: new Pattern('Gosper\'s Glider Gun', [
     [ 3, 9 ], [ 4, 9 ], [ 3, 10 ], [ 4, 10 ], [ 15, 7 ], [ 16, 7 ], [ 14, 8 ],
@@ -24,7 +24,7 @@ const patterns = {
     [ 16, 13 ], [ 27, 5 ], [ 25, 6 ], [ 27, 6 ], [ 23, 7 ], [ 24, 7 ], [ 23, 8 ],
     [ 24, 8 ], [ 23, 9 ], [ 24, 9 ], [ 25, 10 ], [ 27, 10 ], [ 27, 11 ],
     [ 37, 7 ], [ 38, 7 ], [ 37, 8 ], [ 38, 8 ]
-  ]),
+  ], false),
 
   Custom01: new Pattern('Custom 1', [
     [ 13, 18 ], [ 14, 17 ], [ 14, 19 ], [ 15, 17 ], [ 15, 19 ], [ 16, 18 ], [ 17, 18 ],
@@ -32,9 +32,9 @@ const patterns = {
     [ 19, 16 ], [ 19, 17 ], [ 19, 19 ], [ 19, 20 ], [ 19, 21 ], [ 19, 24 ], [ 20, 13 ],
     [ 20, 14 ], [ 20, 18 ], [ 20, 22 ], [ 20, 23 ], [ 21, 18 ], [ 22, 18 ], [ 23, 17 ],
     [ 23, 19 ], [ 24, 17 ], [ 24, 19 ], [ 25, 18 ]
-  ]),
+  ], false),
 
-  Empty: new Pattern('Empty', [])
+  Empty: new Pattern('Empty', [], false)
 }
 
 export default patterns

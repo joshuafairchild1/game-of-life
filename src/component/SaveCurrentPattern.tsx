@@ -16,30 +16,32 @@ const isUniqueName = (name: string) =>
 const SaveCurrentPattern: React.FC<Props> = props => {
   const [ patternName, setPatternName ] = useState('')
   const hideModal = () => props.setModalOpen(false)
+  const handleSubmit = (event: React.SyntheticEvent) => {
+    event.preventDefault()
+    if (patternName && isUniqueName(patternName)) {
+      hideModal()
+      props.onSave(patternName)
+      setPatternName('')
+    }
+  }
+  const isUnique = isUniqueName(patternName)
+  const disabled = !isUnique || !patternName
   return <>
     <Save className="save-icon"
           titleAccess="Save Pattern"
-          onClick={() => props.setModalOpen(true)}>
-      Save
-    </Save>
+          onClick={() => props.setModalOpen(true)}/>
     <Modal onEscapeKeyDown={hideModal}
            style={{ textAlign: 'center' }}
            open={props.modalOpen}>
       <Card className="save-pattern-dialog">
         <label>Pattern Name</label>
-        <form onSubmit={event => {
-          event.preventDefault()
-          if (patternName && isUniqueName(patternName)) {
-            hideModal()
-            props.onSave(patternName)
-            setPatternName('')
-          }
-        }}>
+        <form onSubmit={handleSubmit}>
           <Input value={patternName}
                  onChange={event => setPatternName(event.target.value)}/>
-          <Button>Save</Button>
+          <Button disabled={disabled}
+                  onClick={handleSubmit}>Save</Button>
         </form>
-        {!isUniqueName(patternName) &&
+        {!isUnique &&
         <small className="warn-text">
           A pattern with this name already exists
         </small>}
@@ -47,4 +49,5 @@ const SaveCurrentPattern: React.FC<Props> = props => {
     </Modal>
   </>
 }
+
 export default SaveCurrentPattern
