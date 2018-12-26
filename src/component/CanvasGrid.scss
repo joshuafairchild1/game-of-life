@@ -1,0 +1,11 @@
+div.canvas-wrapper {
+  padding: .6em;
+  color: white;
+  margin: 0 auto;
+
+  canvas {
+    padding: 0;
+    border: solid 1px black;
+    display: block;
+  }
+}

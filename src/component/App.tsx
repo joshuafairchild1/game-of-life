@@ -74,7 +74,9 @@ const App: React.FC<Props> = props => {
         deletePattern={toDelete => {
           props.storage.delete(toDelete)
           removePattern(toDelete)
-          pattern.set(allPatterns.Empty)
+          if (toDelete.name === pattern.get().name) {
+            pattern.set(allPatterns.Empty)
+          }
         }}
         cellCount={cellCount}
         pattern={pattern}

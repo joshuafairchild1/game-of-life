@@ -4,6 +4,8 @@ import CanvasConfig from './model/CanvasConfig'
 import Grid from '../game/Grid'
 import useCanvasGrid  from './hook/useCanvasGrid'
 
+import './CanvasGrid.scss'
+
 type Props = {
   configuration: CanvasConfig
   grid: Grid

@@ -49,4 +49,17 @@ describe('Pattern', function() {
     assert.deepEqual(Pattern.parse(patternLike), asPattern)
     assert.throws(() => Pattern.parse(notAPattern), 'cannot parse as pattern')
   })
+
+  it('unregister', function() {
+    const pattern = new Pattern('pattern', [ [ 0,0 ] ])
+    Pattern.unregister(pattern)
+    assert.isTrue(Pattern.known.length === 0)
+  })
+
+  it('forName', function() {
+    const pattern = new Pattern('pattern', [ [ 0, 0 ] ])
+    assert.equal(Pattern.forName(pattern.name), pattern)
+    assert.throws(
+      () => Pattern.forName('not-a-pattern'), 'no pattern with name')
+  })
 })

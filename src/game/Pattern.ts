@@ -35,7 +35,7 @@ export default class Pattern {
       && typeof asPattern.name === 'string'
   }
 
-  static delete(pattern: Pattern) {
+  static unregister(pattern: Pattern) {
     Pattern.registry.delete(pattern.name)
   }
 

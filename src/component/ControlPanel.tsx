@@ -13,6 +13,8 @@ import { Game } from './hook/useGame'
 import { DynamicConfiguration } from '../Types'
 import { invert } from '../utils'
 
+import './ControlPanel.scss'
+
 type Props = {
   allPatterns: Pattern[]
   game: Game

@@ -1,8 +1,10 @@
 import * as React from 'react'
 import { useState } from 'react'
-import { Save } from '@material-ui/icons'
+import { Close, Save } from '@material-ui/icons'
 import { Button, Card, Input, Modal } from '@material-ui/core'
 import Pattern from '../game/Pattern'
+
+import './SaveCurrentPattern.scss'
 
 type Props = {
   modalOpen: boolean
@@ -34,9 +36,13 @@ const SaveCurrentPattern: React.FC<Props> = props => {
            style={{ textAlign: 'center' }}
            open={props.modalOpen}>
       <Card className="save-pattern-dialog">
+        <span className="close-icon">
+          <Close onClick={hideModal}/>
+        </span>
         <label>Pattern Name</label>
         <form onSubmit={handleSubmit}>
           <Input value={patternName}
+                 inputRef={ref => ref && ref.focus()}
                  onChange={event => setPatternName(event.target.value)}/>
           <Button disabled={disabled}
                   onClick={handleSubmit}>Save</Button>

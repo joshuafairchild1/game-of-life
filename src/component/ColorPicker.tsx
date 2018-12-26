@@ -1,7 +1,9 @@
 import * as React from 'react'
+import { useState } from 'react'
 import { SketchPicker } from 'react-color'
 import { DynamicConfiguration } from '../Types'
-import { useState } from 'react'
+
+import './ColorPicker.scss'
 
 type Props = {
   color: DynamicConfiguration<string>

@@ -19,7 +19,7 @@ export default class PatternStorage {
 
   delete(pattern: Pattern) {
     this.patterns.set(this.stored.filter(it => it.name !== pattern.name))
-    Pattern.delete(pattern)
+    Pattern.unregister(pattern)
   }
 
 }

@@ -1,0 +1,27 @@
+div.controls form.control-generation-edit {
+  display: inline;
+
+  div {
+    input {
+      width: 3.5em;
+      text-align: center;
+    }
+
+    &::after {
+      border-bottom-color: black;
+    }
+  }
+
+  .icon-check {
+    font-size: 1.4em;
+    top: .35em;
+    position: relative;
+    padding-left: .2em;
+    cursor: pointer;
+    color: black;
+
+    &:hover {
+      opacity: .5;
+    }
+  }
+}

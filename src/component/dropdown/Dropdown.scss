@@ -37,12 +37,12 @@ ul.options {
     display: flex;
     justify-content: space-between;
 
-    &.selected-item {
-      background-color: rgba(0, 0, 0, 0.14);
+    &.focused-item {
+      background-color: rgba(0, 0, 0, 0.08);
     }
 
-    &:hover {
-      background-color: rgba(0, 0, 0, 0.08);
+    &.selected-item {
+      background-color: rgba(0, 0, 0, 0.14);
     }
 
     svg {

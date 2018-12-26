@@ -1,10 +1,11 @@
 import * as React from 'react'
-import Input from '@material-ui/core/Input/Input'
-
-import { CheckCircle } from '@material-ui/icons'
-import keyEventHandler, { isNumber } from '../utils'
 import { useRef } from 'react'
 import { useState } from 'react'
+import Input from '@material-ui/core/Input/Input'
+import { CheckCircle } from '@material-ui/icons'
+import keyEventHandler, { isNumber } from '../utils'
+
+import './GenerationInput.scss'
 
 type Props = {
   onSubmit: (nextValue: number) => void

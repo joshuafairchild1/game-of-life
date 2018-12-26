@@ -1,19 +1,26 @@
 import * as React from 'react'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { ArrowDropDown } from '@material-ui/icons'
 import { stopEvent } from '../../utils'
 
 import './Dropdown.scss'
 
-type Option = { label: string, value: string }
+export type Option = { label: string, value: string }
 
 export const toOption = ({ name }: { name: string }) =>
   ({ label: name, value: name })
+
+const getValue = (event: React.SyntheticEvent) =>
+  event.currentTarget.getAttribute('data-value')
 
 type Props = {
   options: Option[]
   selected: Option
   onChange: (value: string) => void
+  isOpen: boolean
+  toggleOpen: () => void
+  focused?: Option
+  onItemActive?: (value: string | null) => void
   className?: string
   children?: (item: Option) => React.ReactNode
 }
@@ -22,13 +29,12 @@ type Props = {
  * https://github.com/dbilgili/Custom-ReactJS-Dropdown-Components
  */
 const Dropdown: React.FC<Props> = (props) => {
-  const [ isOpen, setIsOpen ] = useState(false)
   const removeClickListener = () =>
     window.removeEventListener('click', collapseList)
-  const collapseList = () => isOpen && setIsOpen(false)
+  const collapseList = () => props.isOpen && props.toggleOpen()
 
   useEffect(() => {
-    if (isOpen) {
+    if (props.isOpen) {
       window.addEventListener('click', collapseList)
     } else {
       removeClickListener()
@@ -37,20 +43,31 @@ const Dropdown: React.FC<Props> = (props) => {
   })
 
   return <>
-    <div className="selected" onClick={() => setIsOpen(current => !current)}>
+    <div className="selected" onClick={props.toggleOpen}>
       <div className="selected-value">{props.selected.label}</div>
       <ArrowDropDown/>
     </div>
-    {isOpen &&
+    {props.isOpen &&
     <ul className="options" onClick={stopEvent}>
       {props.options.map(item => {
         const { value } = item
+        const classes = []
+        if (value === props.selected.value) {
+          classes.push('selected-item')
+        }
+        if (props.focused && props.focused.value === value) {
+          classes.push('focused-item')
+        }
         return <li key={value}
-                   className={value === props.selected.value && 'selected-item' || ''}
+                   className={classes.join(' ')}
                    data-value={value}
-                   onClick={({ currentTarget }) => {
+                   onMouseMove={event =>
+                     props.onItemActive && props.onItemActive(getValue(event))}
+                   onMouseOut={() =>
+                     props.onItemActive && props.onItemActive(null)}
+                   onClick={event => {
                      collapseList()
-                     props.onChange(currentTarget.getAttribute('data-value'))
+                     props.onChange(getValue(event))
                    }}>
           {props.children ? props.children(item) : item.label}
         </li>

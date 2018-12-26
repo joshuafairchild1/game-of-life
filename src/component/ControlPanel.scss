@@ -1,0 +1,112 @@
+@import './../global';
+
+div.controls {
+  position: absolute;
+  padding: 1em;
+  width: 15vw;
+  margin-left: 1.5em;
+
+  div.control-icons {
+    margin: auto;
+    display: flex;
+    justify-content: space-evenly;
+
+    .control-icon {
+      font-size: 2em;
+      padding: .1em;
+      color: black;
+
+      &.icon-reset {
+        top: .08em;
+        font-size: 1.8em;
+        position: relative;
+      }
+
+      &.not-allowed {
+        cursor: not-allowed;
+        color: $color-secondary;
+      }
+
+      &:hover {
+        background-color: $color-hover-effect;
+        opacity: 50%;
+        border-radius: 20%;
+        animation: fadein .5s;
+      }
+    }
+  }
+
+  div.control-pattern {
+    margin: 1em 0;
+
+    div.control-pattern-input::after {
+      border-bottom-color: black;
+    }
+  }
+
+  div.control-generation-interval {
+    margin: 1em 0;
+    label {
+      font-size: small;
+      margin-right: .5em;
+      position: relative;
+      bottom: .5em;
+    }
+  }
+
+  .control-slider {
+    div div {
+      background-color: $color-secondary;
+    }
+    button {
+      background-color: $color-primary;
+    }
+  }
+
+  div.control-cell-container {
+    margin-top: 1em;
+
+    div.control-cell-count {
+      margin-top: 0.8em;
+      display: flex;
+
+      small.cell-count-min {
+        position: relative;
+        top: -0.55em;
+        right: .1em;
+      }
+
+      small.cell-count-max {
+        position: relative;
+        top: -1.75em;
+        left: 0.5em;
+      }
+    }
+  }
+
+  span.control-generation-editable {
+    padding: .2em 1em;
+    cursor: pointer;
+
+    &:hover {
+      background-color: lightgrey;
+      border-radius: 10%;
+      animation: fadein 0.5s;
+    }
+  }
+
+  div.lower-controls-container {
+    display: flex;
+    justify-content: space-between;
+
+    svg.save-icon {
+      cursor: pointer;
+      border-radius: 1em;
+      padding: .2em;
+
+      &:hover {
+        background: $color-hover-effect;
+      }
+    }
+  }
+}
