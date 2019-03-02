@@ -1,5 +1,5 @@
-import Pattern from '../../game/Pattern'
-import patterns from '../../game/patterns'
+import Pattern from '../game/Pattern'
+import patterns from '../game/patterns'
 
 export default class AppState {
   constructor(

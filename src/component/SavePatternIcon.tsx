@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { Close, Save } from '@material-ui/icons'
 import { Button, Card, Input, Modal } from '@material-ui/core'
 import Pattern from '../game/Pattern'
-import useStateVariable from './state/useStateVariable'
+import useStateVariable from '../state/useStateVariable'
 
 import './SavePatternIcon.scss'
 

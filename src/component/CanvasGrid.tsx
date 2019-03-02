@@ -1,6 +1,6 @@
 import * as React from 'react'
 import Card from '@material-ui/core/Card/Card'
-import CanvasConfig from './model/CanvasConfig'
+import CanvasConfig from '../model/CanvasConfig'
 import Grid from '../game/Grid'
 import useCanvasGrid  from './hook/useCanvasGrid'
 

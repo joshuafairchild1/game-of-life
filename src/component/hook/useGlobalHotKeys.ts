@@ -1,5 +1,5 @@
 import saveKeyHandler from '../saveKeyHandler'
-import useAppState from '../state/useAppState'
+import useAppState from '../../state/useAppState'
 import { Game } from './useGame'
 import { KeyEventHandler } from '../../Types'
 

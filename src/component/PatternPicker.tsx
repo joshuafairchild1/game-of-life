@@ -6,7 +6,7 @@ import Pattern from '../game/Pattern'
 import KeyDownListener from './KeyDownListener'
 import { stopEvent } from '../utils'
 import usePickerControls from './hook/usePickerControls'
-import useAppState from './state/useAppState'
+import useAppState from '../state/useAppState'
 
 type Props = {
   options: Pattern[]

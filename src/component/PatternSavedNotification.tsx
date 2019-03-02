@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { IconButton, Snackbar } from '@material-ui/core'
 import { Close } from '@material-ui/icons'
-import useAppState, { values } from './state/useAppState'
+import useAppState, { values } from '../state/useAppState'
 
 type Props = {
   hide: () => void

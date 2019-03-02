@@ -12,8 +12,6 @@ export type StateKey = keyof AppState
  */
 export type StateFieldType<PK extends StateKey, K extends PK = PK> = Pick<AppState, PK>[K]
 
-// const a = {} as StateFieldType<'color' | 'cellCount'>
-
 /**
  * Mapped type which converts a StateKey [PK] to the type representing an object
  * which contains all keys of [PK], with each key's value being

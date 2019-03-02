@@ -1,4 +1,4 @@
-import CanvasConfig from '../model/CanvasConfig'
+import CanvasConfig from '../../model/CanvasConfig'
 import Grid from '../../game/Grid'
 import useCanvas from './useCanvas'
 

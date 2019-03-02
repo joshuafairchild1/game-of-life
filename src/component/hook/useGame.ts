@@ -2,7 +2,7 @@ import Grid from '../../game/Grid'
 import useGenerations from './useGenerations'
 import Pattern from '../../game/Pattern'
 import Direction from '../../Direction'
-import useAppState, { values } from '../state/useAppState'
+import useAppState, { values } from '../../state/useAppState'
 
 import { Rules } from '../../Types'
 import { timed } from '../../utils'
