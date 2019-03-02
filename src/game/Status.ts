@@ -5,10 +5,9 @@ namespace Status {
     return status === Status.Alive ? Status.Dead : Status.Alive
   }
 
-  export function from(value: any) {
-    return (value === 'false' || value === '0')
-      ? Status.Dead
-      : !!value ? Status.Alive : Status.Dead
+  export function from(value: unknown) {
+    return (!value || value === 'false' || value === '0')
+      ? Status.Dead : Status.Alive
   }
 }
 

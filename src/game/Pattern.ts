@@ -20,7 +20,7 @@ export default class Pattern {
     return list
   }
 
-  static parse(maybePattern: any): Pattern {
+  static parse(maybePattern: unknown): Pattern {
     if (!Pattern.is(maybePattern)) {
       throw Error('cannot parse as pattern: ' + JSON.stringify(maybePattern))
     }
@@ -28,15 +28,11 @@ export default class Pattern {
     return new Pattern(maybePattern.name, maybePattern.coordinates)
   }
 
-  static is(maybePattern: any): maybePattern is Pattern {
+  static is(maybePattern: unknown): maybePattern is Pattern {
     const asPattern = maybePattern as Pattern
     return asPattern
       && Array.isArray(asPattern.coordinates)
       && typeof asPattern.name === 'string'
-  }
-
-  static unregister(pattern: Pattern) {
-    Pattern.registry.delete(pattern.name)
   }
 
   static forName(name: string) {
@@ -49,6 +45,10 @@ export default class Pattern {
 
   private static register(pattern: Pattern) {
     Pattern.registry.set(pattern.name, pattern)
+  }
+
+  static unregister(pattern: Pattern) {
+    Pattern.registry.delete(pattern.name)
   }
 
   private static registry = new Map<string, Pattern>()

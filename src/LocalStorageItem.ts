@@ -1,7 +1,7 @@
 export default class LocalStorageItem<T> {
   constructor(
     private key: string,
-    private parseStrategy?: (stored: any) => T
+    private parseStrategy?: (stored: unknown) => T
   ) {
     if (typeof localStorage === 'undefined') {
       throw Error('LocalStorage not supported')

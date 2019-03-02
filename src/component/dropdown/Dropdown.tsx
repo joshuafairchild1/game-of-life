@@ -24,6 +24,7 @@ type Props = {
   className?: string
   children?: (item: Option) => React.ReactNode
 }
+
 /**
  * Component and styles adapted from
  * https://github.com/dbilgili/Custom-ReactJS-Dropdown-Components

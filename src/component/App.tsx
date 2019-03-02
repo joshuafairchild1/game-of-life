@@ -1,109 +1,62 @@
 import * as React from 'react'
-import { useState } from 'react'
 import CanvasGrid from './CanvasGrid'
 import ControlPanel from './ControlPanel'
 import CanvasConfig from './model/CanvasConfig'
 import useGame from './hook/useGame'
-import useDynamicConfigurations from './hook/useDynamicConfigurations'
 import Pattern from '../game/Pattern'
 import KeyDownListener from './KeyDownListener'
-import saveKeyHandler from './saveKeyHandler'
-import usePatterns from './hook/usePatterns'
 import PatternSavedNotification from './PatternSavedNotification'
-import allPatterns  from '../game/patterns'
+import PatternStorage from '../PatternStorage'
+import useAppState from './state/useAppState'
+import useGlobalHotKeys from './hook/useGlobalHotKeys'
 
 import { Rules } from '../Types'
-import PatternStorage from '../PatternStorage'
-
-const SPACEBAR_KEY_NAME = ' '
+import { useCallback, useEffect, useRef } from 'react'
 
 type Props = {
   rules: Rules
   presetPatterns: Pattern[]
-  initialPattern: Pattern
   configuration: CanvasConfig
   interval: number
   storage: PatternStorage
-  // persistPattern: (pattern: Pattern) => void
-  // deletePattern: (pattern: Pattern) => void
 }
 
 const App: React.FC<Props> = props => {
-  const { configuration, rules } = props
-  const {
-    cellCount, renderInterval, pattern, color, ...dynamics
-  } = useDynamicConfigurations({
-    lineSeparation: configuration.lineSeparation,
-    cellCount: configuration.cellCount,
-    canvasLength: configuration.canvasLength,
-    renderInterval: props.interval,
-    pattern: props.initialPattern,
-    color: configuration.color
-  })
-  const [ savePatternModalOpen, setSavePatternModalOpen ] = useState(false)
-  const setPatternModalOpen = (isOpen: boolean) => {
-    if (isOpen) {
-      game.pause()
+  const state = useAppState()
+  const setRecentSavedPattern = state.recentlySavedPattern.set
+  const recentSavedPattern = state.recentlySavedPattern.get()
+  const color = state.color.get()
+  const cellCount = state.cellCount.get()
+  const game = useGame(props.rules)
+  const keyHandlers = useGlobalHotKeys(game)
+  const containerRef = useRef<HTMLDivElement | null>(null)
+  const patternPickerOpen = state.patternPickerOpen.get()
+  const saveModalOpen = state.showSavePatternModal.get()
+  const focusContainer = useCallback(() => {
+    if (!patternPickerOpen && !saveModalOpen) {
+      containerRef.current && containerRef.current.focus()
     }
-    setSavePatternModalOpen(isOpen)
-  }
-  const [ recentlySavedPattern, setRecentlySavedPattern ]
-    = useState<Pattern | null>(null)
-  const [ showPatternSaveNotification, setShowPatternSaveNotification ]
-    = useState(false)
-  const game = useGame({ cellCount, renderInterval, pattern, rules })
-  const { patterns, addPattern, removePattern } = usePatterns(props.presetPatterns)
-  const saveGridAsPattern = (name: string) => {
-    const newPattern = game.current.toPattern(name)
-    props.storage.save(newPattern)
-    addPattern(newPattern)
-    setRecentlySavedPattern(newPattern)
-    setShowPatternSaveNotification(true)
-  }
-  const keyDownHandlers = [ {
-    keyName: 's',
-    onKeyDown: saveKeyHandler(() => setPatternModalOpen(true))
-  }, {
-    keyName: SPACEBAR_KEY_NAME, onKeyDown: game.togglePlaying
-  }]
+  }, [ patternPickerOpen, saveModalOpen ])
+  useEffect(focusContainer)
   return (
     <KeyDownListener
       className="app-container"
-      handlers={savePatternModalOpen ? [] : keyDownHandlers}>
+      refAccess={containerRef}
+      handlers={state.showSavePatternModal.get() ? [] : keyHandlers}>
       <ControlPanel
-        deletePattern={toDelete => {
-          props.storage.delete(toDelete)
-          removePattern(toDelete)
-          if (toDelete.name === pattern.get().name) {
-            pattern.set(allPatterns.Empty)
-          }
-        }}
-        cellCount={cellCount}
-        pattern={pattern}
-        savePattern={saveGridAsPattern}
-        savePatternModalOpen={savePatternModalOpen}
-        setSavePatternModalOpen={setPatternModalOpen}
-        renderInterval={renderInterval}
-        allPatterns={patterns}
-        color={color}
+        presetPatterns={props.presetPatterns}
+        storage={props.storage}
         game={game}/>
       <CanvasGrid
-        configuration={{
-          ...configuration,
-          canvasLength: dynamics.canvasLength.get(),
-          lineSeparation: dynamics.lineSeparation.get(),
-          cellCount: cellCount.get(),
-          color: color.get()
-        }}
+        configuration={{ ...props.configuration, color, cellCount }}
         grid={game.current}
         onCellClick={game.cellClicked}/>
       <PatternSavedNotification
-        isShowing={showPatternSaveNotification}
         hide={() => {
-          setShowPatternSaveNotification(false)
-          setRecentlySavedPattern(null)
+          state.showPatternSaveNotification.set(false)
+          setRecentSavedPattern(null)
         }}
-        patternName={recentlySavedPattern && recentlySavedPattern.name}/>
+        patternName={recentSavedPattern && recentSavedPattern.name}/>
     </KeyDownListener>
   )
 }

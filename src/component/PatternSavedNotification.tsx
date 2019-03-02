@@ -1,15 +1,19 @@
 import * as React from 'react'
 import { IconButton, Snackbar } from '@material-ui/core'
 import { Close } from '@material-ui/icons'
+import useAppState, { values } from './state/useAppState'
 
 type Props = {
-  isShowing: boolean
   hide: () => void
   patternName: string | undefined
 }
 
 const PatternSavedNotification: React.FC<Props> = props => {
-  if (props.isShowing && !props.patternName) {
+  const {
+    recentlySavedPattern, showPatternSaveNotification
+  } = values(useAppState('recentlySavedPattern', 'showPatternSaveNotification'))
+  if (showPatternSaveNotification
+    && (!recentlySavedPattern || !recentlySavedPattern.name)) {
     console.warn(
       'bug: notification state set to open with no pattern available')
     return null
@@ -19,7 +23,7 @@ const PatternSavedNotification: React.FC<Props> = props => {
       vertical: 'bottom',
       horizontal: 'right',
     }}
-    open={props.isShowing}
+    open={showPatternSaveNotification}
     onClose={props.hide}
     autoHideDuration={4000}
     message={<span>Saved pattern "{props.patternName}"</span>}

@@ -5,12 +5,12 @@ export type Coordinate = [ number, number ]
 
 export type Rules = (current: Grid) => Grid
 
-export interface DynamicConfiguration<T> {
-  get(): T,
-  set(value: T): void
-}
+// might be useful later
 
-export type KeyEventHandler<T> = {
+// export type extractConfigurationType<Type> =
+//   Type extends DynamicConfiguration<infer X> ? X : null
+
+export interface KeyEventHandler<T> {
   keyName: string
   onKeyDown: (event: KeyEvent<T>) => void
 }

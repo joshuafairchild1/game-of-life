@@ -20,7 +20,7 @@ const CanvasGrid: React.FC<Props> = ({ grid, configuration, onCellClick }) => {
   } = useCanvasGrid(grid, configuration)
   const { current } = canvasRef
 
-  function handleCellInteraction(
+  function handleWith(
     handler: (cellX: number, cellY: number) => void
   ) {
     return function handleEvent(event: React.MouseEvent<HTMLCanvasElement>) {
@@ -39,11 +39,12 @@ const CanvasGrid: React.FC<Props> = ({ grid, configuration, onCellClick }) => {
       ref={canvasRef}
       width={configuration.canvasLength}
       height={configuration.canvasLength}
-      onMouseOut={handleCellInteraction(unhighlightActiveCell)}
-      onMouseMove={handleCellInteraction(highlightCell)}
-      onClick={handleCellInteraction(onCellClick)}/>
+      onMouseOut={handleWith(unhighlightActiveCell)}
+      onMouseMove={handleWith(highlightCell)}
+      onClick={handleWith(onCellClick)}/>
   </Card>
 }
+
 export default CanvasGrid
 
 const determineEnclosingCell = (

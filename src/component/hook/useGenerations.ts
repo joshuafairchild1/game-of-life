@@ -8,9 +8,7 @@ function usePersistentRef<T>(state: T) {
   return ref
 }
 
-export default function useGenerations(
-  initial: Grid
-) {
+export default function useGenerations(initial: Grid) {
   const [ current, setCurrent ] = useState(initial)
   const [ generations, setGenerations ] = useState([ current ])
   const currentRef = usePersistentRef(current)

@@ -2,11 +2,11 @@ import Grid from '../../game/Grid'
 import useGenerations from './useGenerations'
 import Pattern from '../../game/Pattern'
 import Direction from '../../Direction'
+import useAppState, { values } from '../state/useAppState'
 
 import { Rules } from '../../Types'
 import { timed } from '../../utils'
 import { useEffect, useLayoutEffect, useState } from 'react'
-import { DynamicConfigurations } from './useDynamicConfigurations'
 
 export interface Game {
   current: Grid,
@@ -21,25 +21,21 @@ export interface Game {
   setGenerationIndex: (targetIndex: number) => void
 }
 
-export type GameConfiguration = {
-  rules: Rules
-} & Pick<DynamicConfigurations, 'cellCount' | 'renderInterval' | 'pattern'>
-
-export default function useGame({ rules, ...configuration }: GameConfiguration): Game {
-  const renderInterval = configuration.renderInterval.get()
-  const cellCount = configuration.cellCount.get()
-  const pattern = configuration.pattern.get()
+export default function useGame(rules: Rules): Game {
+  const {
+    selectedPattern, renderInterval, cellCount
+  } = values(useAppState('selectedPattern', 'renderInterval', 'cellCount'))
   const [ timeout, setRenderTimeout ] = useState<any | null>(null)
   const gridOf = (pattern: Pattern, id: number) =>
     Grid.createWithLength(cellCount, id, pattern)
   const {
     currentGeneration: { current, ref }, setCurrent,
     generations, addGeneration, setGenerations, resetGenerations
-  } = useGenerations(gridOf(pattern, 0))
+  } = useGenerations(gridOf(selectedPattern, 0))
 
   useLayoutEffect(_updateCurrentGrid, [ cellCount ])
 
-  useEffect(_applyNewPattern, [ pattern ])
+  useEffect(_applyNewPattern, [ selectedPattern ])
 
   useEffect(() => {
     isRunning() && _scheduleNextGeneration()
@@ -156,7 +152,7 @@ export default function useGame({ rules, ...configuration }: GameConfiguration):
 
   function _applyNewPattern() {
     resetGenerations()
-    const newGrid = gridOf(pattern, current.id)
+    const newGrid = gridOf(selectedPattern, current.id)
     setCurrent(newGrid)
     setGenerations([ newGrid ])
   }

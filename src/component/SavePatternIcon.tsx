@@ -3,21 +3,21 @@ import { useState } from 'react'
 import { Close, Save } from '@material-ui/icons'
 import { Button, Card, Input, Modal } from '@material-ui/core'
 import Pattern from '../game/Pattern'
+import useStateVariable from './state/useStateVariable'
 
-import './SaveCurrentPattern.scss'
+import './SavePatternIcon.scss'
 
 type Props = {
-  modalOpen: boolean
-  setModalOpen: (isOpen: boolean) => void
   onSave: (patternName: string) => void
 }
 
 const isUniqueName = (name: string) =>
   Pattern.known.every(it => it.name !== name)
 
-const SaveCurrentPattern: React.FC<Props> = props => {
+const SavePatternIcon: React.FC<Props> = props => {
   const [ patternName, setPatternName ] = useState('')
-  const hideModal = () => props.setModalOpen(false)
+  const showModal = useStateVariable('showSavePatternModal')
+  const hideModal = () => showModal.set(false)
   const handleSubmit = (event: React.SyntheticEvent) => {
     event.preventDefault()
     if (patternName && isUniqueName(patternName)) {
@@ -31,10 +31,10 @@ const SaveCurrentPattern: React.FC<Props> = props => {
   return <>
     <Save className="save-icon"
           titleAccess="Save Pattern"
-          onClick={() => props.setModalOpen(true)}/>
+          onClick={() => showModal.set(true)}/>
     <Modal onEscapeKeyDown={hideModal}
            style={{ textAlign: 'center' }}
-           open={props.modalOpen}>
+           open={showModal.get()}>
       <Card className="save-pattern-dialog">
         <span className="close-icon">
           <Close onClick={hideModal}/>
@@ -56,4 +56,4 @@ const SaveCurrentPattern: React.FC<Props> = props => {
   </>
 }
 
-export default SaveCurrentPattern
+export default SavePatternIcon
