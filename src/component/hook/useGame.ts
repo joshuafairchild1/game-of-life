@@ -6,7 +6,7 @@ import useAppState from '../../state/useAppState'
 import values from '../../state/values'
 import { Rules } from '../../Types'
 import { timed } from '../../utils'
-import { useEffect, useLayoutEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 
 export interface Game {
   current: Grid,
@@ -14,10 +14,10 @@ export interface Game {
   pause: VoidFunction,
   resume: VoidFunction,
   togglePlaying: VoidFunction
-  stepCurrentGeneration: (direction: Direction) => void,
-  cellClicked: (cellX: number, cellY: number) => void,
-  generationIndex: () => number,
-  setGenerationIndex: (targetIndex: number) => void
+  stepCurrentGeneration(direction: Direction): void,
+  cellClicked(cellX: number, cellY: number): void,
+  generationIndex(): number,
+  setGenerationIndex(targetIndex: number): void
   isRunning: boolean,
 }
 
@@ -25,23 +25,26 @@ export default function useGame(rules: Rules): Game {
   const {
     selectedPattern, renderInterval, cellCount
   } = values(useAppState('selectedPattern', 'renderInterval', 'cellCount'))
-  const timeout = useRef<any | null>(null)
+  // timeout is kept in state rather than a ref so that components
+  // can get a re-render when it changes
+  const [ timeout, setNextTimeout ] = useState<any | null>(null)
   const gridOf = (pattern: Pattern, id: number) => Grid.createWithLength(cellCount, id, pattern)
   const {
     currentGeneration: { current, ref }, setCurrent,
     generations, addGeneration, setGenerations, resetGenerations
   } = useGenerations(gridOf(selectedPattern, 0))
 
-  const isRunning = timeout.current !== null
+  const isRunning = timeout !== null
 
   useLayoutEffect(_updateCurrentGrid, [ cellCount ])
 
-  useEffect(() => {
-    _applyNewPattern()
-  }, [ selectedPattern ])
+  useEffect(_applyNewPattern, [ selectedPattern ])
 
   useEffect(() => {
     isRunning && _scheduleNextGeneration()
+    // not putting `timeout` in the input list because we only want to
+    // reschedule when the interval itself changes, elsewise the
+    // game will infinitely reschedule itself
   }, [ renderInterval ])
 
   const generationIndex = () => {
@@ -67,8 +70,8 @@ export default function useGame(rules: Rules): Game {
   }
 
   function pause() {
-    clearInterval(timeout.current)
-    timeout.current = null
+    clearInterval(timeout)
+    setNextTimeout(null)
   }
 
   function cellClicked(x: number, y: number) {
@@ -135,9 +138,9 @@ export default function useGame(rules: Rules): Game {
 
   function _scheduleNextGeneration() {
     // console.warn('scheduling next generation in ', renderInterval, 'ms')
-    clearInterval(timeout.current)
+    clearInterval(timeout)
     _stepForward()
-    timeout.current = setInterval(_stepForward, renderInterval)
+    setNextTimeout(setInterval(_stepForward, renderInterval))
   }
 
   /**

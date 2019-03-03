@@ -37,10 +37,10 @@ const Dropdown: React.FC<Props> = (props) => {
   useEffect(() => {
     if (props.isOpen) {
       window.addEventListener('click', collapseList)
+      return removeClickListener
     } else {
       removeClickListener()
     }
-    // return removeClickListener
   })
 
   return <>

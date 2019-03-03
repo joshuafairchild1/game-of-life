@@ -45,8 +45,8 @@ export default function usePickerControls(
     setActiveBy(current => options[ current - 1 ] || options[ options.length - 1 ])
   }
 
-  function selectActiveItem(doClose: boolean) {
-    return function(event: KeyEvent<HTMLDivElement>) {
+  function selectActiveItem(doClose: boolean = false) {
+    return function selectActiveItemFromEvent(event: KeyEvent<HTMLDivElement>) {
       stopEvent(event)
       if (active) {
         onSelected(active)
@@ -57,12 +57,13 @@ export default function usePickerControls(
     }
   }
 
-  function conditionalDeletePattern() {
+  function deleteIfAble() {
     if (active && active.canDelete) {
       deletePattern(active)
-      focusItem(options[ 0 ].name)
     }
   }
+
+  const deleteHandler = (key: string) => keyHandler(key, deleteIfAble)
 
   return {
     activeItem: {
@@ -71,12 +72,14 @@ export default function usePickerControls(
     },
     handlers: [
       keyHandler('Tab', focusNextItem),
-      keyHandler(' ', selectActiveItem(false)),
+      keyHandler(' ', selectActiveItem()),
       keyHandler('Enter', selectActiveItem(true)),
-      keyHandler('d', conditionalDeletePattern),
       keyHandler('Escape', closePicker),
       keyHandler('ArrowDown', focusNextItem),
-      keyHandler('ArrowUp', focusPreviousItem)
+      keyHandler('ArrowUp', focusPreviousItem),
+      deleteHandler('d'),
+      deleteHandler('Backspace'),
+      deleteHandler('Delete')
     ],
     focusItem
   }

@@ -11,7 +11,6 @@ import useAppState from '../state/useAppState'
 import PatternStorage from '../PatternStorage'
 import usePatterns from './hook/usePatterns'
 import allPatterns from '../game/patterns'
-
 import { Pause, PlayArrow, Replay, SkipNext, SkipPrevious } from '@material-ui/icons'
 import { Game } from './hook/useGame'
 import { invert } from '../utils'

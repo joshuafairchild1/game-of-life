@@ -45,7 +45,6 @@ const PatternPicker: React.FC<Props> = props => {
   function closeMenu() {
     patternPickerOpen.set(false)
     activeItem.set(selected)
-    containerRef.current.blur()
   }
 
   function renderItem(item: Option) {
@@ -64,7 +63,7 @@ const PatternPicker: React.FC<Props> = props => {
     <Dropdown
       className="control-pattern-input"
       onChange={handleSelect}
-      isOpen={patternPickerOpen.get()}
+      isOpen={isOpen}
       toggleOpen={() => patternPickerOpen.set(current => !current)}
       onItemActive={controls.focusItem}
       options={options.map(toOption)}
