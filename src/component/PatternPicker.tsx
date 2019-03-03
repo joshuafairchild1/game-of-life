@@ -1,12 +1,13 @@
 import * as React from 'react'
-import { useEffect, useRef } from 'react'
-import { DeleteForever } from '@material-ui/icons'
 import Dropdown, { Option, toOption } from './dropdown/Dropdown'
 import Pattern from '../game/Pattern'
 import KeyDownListener from './KeyDownListener'
-import { stopEvent } from '../utils'
 import usePickerControls from './hook/usePickerControls'
 import useAppState from '../state/useAppState'
+import useAutoFocusContainer from './hook/useAutoFocusContainer'
+import { useEffect } from 'react'
+import { DeleteForever } from '@material-ui/icons'
+import { stopEvent } from '../utils'
 
 type Props = {
   options: Pattern[]
@@ -22,14 +23,15 @@ const PatternPicker: React.FC<Props> = props => {
     activeItem, handlers, ...controls
   } = usePickerControls(options, selected, onSelect, closeMenu, deletePattern)
 
-  const containerRef = useRef<HTMLDivElement | null>(null)
+  const isOpen = patternPickerOpen.get()
 
   useEffect(() => {
     if (selected.name !== activeItem.get().name) {
       activeItem.set(selected)
     }
-    containerRef.current && containerRef.current.focus()
-  }, [ selected, patternPickerOpen.get() ])
+  }, [ selected ])
+
+  const containerRef = useAutoFocusContainer(() => isOpen, [ isOpen ])
 
   function handleSelect(patternName: string) {
     const pattern = options.find(it => it.name === patternName)

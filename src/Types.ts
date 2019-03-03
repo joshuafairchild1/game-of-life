@@ -6,7 +6,6 @@ export type Coordinate = [ number, number ]
 export type Rules = (current: Grid) => Grid
 
 // might be useful later
-
 // export type extractConfigurationType<Type> =
 //   Type extends DynamicConfiguration<infer X> ? X : null
 

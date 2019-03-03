@@ -1,9 +1,9 @@
 import * as React from 'react'
-import { useRef } from 'react'
-import { useState } from 'react'
 import Input from '@material-ui/core/Input/Input'
-import { CheckCircle } from '@material-ui/icons'
 import keyEventHandler, { isNumber } from '../utils'
+import useAppState from '../state/useAppState'
+import { useState } from 'react'
+import { CheckCircle } from '@material-ui/icons'
 
 import './GenerationInput.scss'
 
@@ -13,44 +13,35 @@ type Props = {
 }
 
 const GenerationInput: React.FC<Props> = props => {
-  const [ editValue, setEditValue ] = useState(props.currentGenerationIndex.toString())
-  const [ isEditing, setIsEditing ] = useState(false)
-  const inputRef = useRef<HTMLInputElement | null>(null)
+  const [ value, setValue ] = useState(props.currentGenerationIndex.toString())
+  const { showGenerationInput } = useAppState('showGenerationInput')
   const handleEscape = keyEventHandler('Escape', () => {
-    setIsEditing(false)
+    showGenerationInput.set(false)
     props.onSubmit(props.currentGenerationIndex)
   })
   const startEdit = () => {
-    setIsEditing(true)
+    showGenerationInput.set(true)
     // capture the new value if it has changed since last edit
     const currentGeneration = props.currentGenerationIndex.toString()
-    if (currentGeneration !== editValue) {
-      setEditValue(currentGeneration)
+    if (currentGeneration !== value) {
+      setValue(currentGeneration)
     }
-    setTimeout(() => {
-      const input = inputRef && inputRef.current
-      if (input) {
-        input.focus()
-        input.select()
-      }
-    })
   }
   const finishEdit = (event: React.SyntheticEvent<any>) => {
     event.preventDefault()
-    const asNumber = parseInt(editValue)
+    const asNumber = parseInt(value)
     if (isNumber(asNumber)) {
-      setIsEditing(false)
+      showGenerationInput.set(false)
       props.onSubmit(asNumber)
     }
   }
-  return isEditing
+  return showGenerationInput.get()
     ? <form className="control-generation-edit" onSubmit={finishEdit}>
-        <Input type="number"
+        <Input type="number" autoFocus
                inputProps={{ min: 0 }}
-               inputRef={inputRef}
-               value={editValue}
+               value={value}
                onKeyUp={handleEscape}
-               onChange={event => setEditValue(event.target.value)}/>
+               onChange={event => setValue(event.target.value)}/>
         <CheckCircle className="icon-check" onClick={finishEdit}/>
       </form>
     : <span title="Edit" onClick={startEdit}

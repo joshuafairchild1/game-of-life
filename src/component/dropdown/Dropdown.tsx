@@ -27,7 +27,7 @@ type Props = {
 
 /**
  * Component and styles adapted from
- * https://github.com/dbilgili/Custom-ReactJS-Dropdown-Components
+ * @see https://github.com/dbilgili/Custom-ReactJS-Dropdown-Components
  */
 const Dropdown: React.FC<Props> = (props) => {
   const removeClickListener = () =>
@@ -40,7 +40,7 @@ const Dropdown: React.FC<Props> = (props) => {
     } else {
       removeClickListener()
     }
-    return removeClickListener
+    // return removeClickListener
   })
 
   return <>

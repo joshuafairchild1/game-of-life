@@ -38,7 +38,7 @@ const ControlPanel: React.FC<Props> = props => {
   const { game } = props
   const generationIndex = game.generationIndex()
   const isFirstGeneration = generationIndex === 0
-  const isPaused = !game.isRunning()
+  const isPaused = !game.isRunning
   const savePattern = (name: string) => {
     const newPattern = game.current.toPattern(name)
     props.storage.save(newPattern)

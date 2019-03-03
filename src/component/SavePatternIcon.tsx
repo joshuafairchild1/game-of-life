@@ -41,8 +41,7 @@ const SavePatternIcon: React.FC<Props> = props => {
         </span>
         <label>Pattern Name</label>
         <form onSubmit={handleSubmit}>
-          <Input value={patternName}
-                 inputRef={ref => ref && ref.focus()}
+          <Input value={patternName} autoFocus
                  onChange={event => setPatternName(event.target.value)}/>
           <Button disabled={disabled}
                   onClick={handleSubmit}>Save</Button>

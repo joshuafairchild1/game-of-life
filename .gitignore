@@ -36,5 +36,6 @@ fabric.properties
 /node_modules
 .DS_Store
 .env
+build
 dist
 package-lock.json

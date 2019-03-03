@@ -1,7 +1,6 @@
 import * as React from 'react'
-import { MutableRefObject, useRef } from 'react'
-import { useEffect } from 'react'
 import keyEventHandler from '../utils'
+import { MutableRefObject, useRef } from 'react'
 import { KeyEventHandler } from '../Types'
 
 type Props = {
@@ -13,7 +12,6 @@ type Props = {
 
 const KeyDownListener: React.FC<Props> = props => {
   const container = props.refAccess || useRef<HTMLDivElement>(null)
-  useEffect(() => container.current && container.current.focus(), [])
   return <div tabIndex={0}
               ref={container}
               className={props.className || ''}

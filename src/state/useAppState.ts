@@ -1,5 +1,11 @@
 import { useGlobal } from 'reactn'
-import { StateSelection, StateFieldType, StateKey, StateVariableSelection } from './Types'
+import {
+  StateKey,
+  StateVariableSelection,
+  StateFieldType,
+  AppStateSetter
+} from './Types'
+import { SetStateAction } from 'react'
 
 export default function useAppState<K extends StateKey>(...stateKeys: K[]) {
   const [ state, setAppState ] = useGlobal()
@@ -8,22 +14,22 @@ export default function useAppState<K extends StateKey>(...stateKeys: K[]) {
     stateKeys = Object.getOwnPropertyNames(state) as K[]
   }
   for (const key of stateKeys) {
-    const setStateValue = (value: StateFieldType<K>) =>
-      setAppState(current => ({ ...current, [key]: value }))
     selection[key] = {
-      get: () => state[key],
-      set: setStateValue
+      get: () => state[ key ],
+      set: _useStateSetter(key, setAppState)
     }
   }
   return selection
 }
 
-export function values<K extends StateKey>(
-  selection: StateVariableSelection<K>
+function _useStateSetter<K extends StateKey>(
+  key: K, setAppState: AppStateSetter
 ) {
-  const rawState = {} as StateSelection<K>
-  for (const key in selection) {
-    rawState[key] = selection[key].get()
+  return function setStateValue(value: SetStateAction<StateFieldType<K>>) {
+    setAppState(current => ({
+      ...current,
+      [key]: typeof value === 'function'
+        ? value(current[ key ]) : value
+    }))
   }
-  return rawState
 }

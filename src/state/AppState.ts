@@ -10,6 +10,7 @@ export default class AppState {
 
   readonly showSavePatternModal: boolean = false
   readonly showPatternSaveNotification: boolean = false
+  readonly showGenerationInput: boolean = false
   readonly patternPickerOpen: boolean = false
   readonly selectedPattern: Pattern = patterns.Custom01
   readonly recentlySavedPattern: Pattern | null = null

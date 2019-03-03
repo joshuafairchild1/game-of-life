@@ -30,10 +30,12 @@ module.exports = {
     publicPath: 'http://localhost:3000/dist',
     historyApiFallback: true
   },
-  // Enable sourcemaps for debugging webpack's output.
-  devtool: 'source-map',
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
+    new webpack.SourceMapDevToolPlugin({
+      filename: '[file].map',
+      test: /\.(js|jsx|css)($|\?)/i,
+      exclude: /vendors.*\.js/
+    })
   ],
 }

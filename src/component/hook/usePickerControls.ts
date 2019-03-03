@@ -57,8 +57,8 @@ export default function usePickerControls(
     }
   }
 
-  function conditionalDeletePattern(event: KeyEvent<HTMLDivElement>) {
-    if ((event.ctrlKey || event.metaKey) && active && active.canDelete) {
+  function conditionalDeletePattern() {
+    if (active && active.canDelete) {
       deletePattern(active)
       focusItem(options[ 0 ].name)
     }
