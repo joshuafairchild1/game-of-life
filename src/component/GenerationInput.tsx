@@ -2,8 +2,8 @@ import * as React from 'react'
 import Input from '@material-ui/core/Input/Input'
 import keyEventHandler, { isNumber } from '../utils'
 import useAppState from '../state/useAppState'
+import CheckCircle from '@material-ui/icons/CheckCircle'
 import { useState } from 'react'
-import { CheckCircle } from '@material-ui/icons'
 
 import './GenerationInput.scss'
 

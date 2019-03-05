@@ -42,6 +42,10 @@ export default function usePickerControls(
 
   function focusPreviousItem(event: KeyEvent<HTMLDivElement>) {
     stopEvent(event)
+    _focusPreviousInternal()
+  }
+
+  function _focusPreviousInternal() {
     setActiveBy(current => options[ current - 1 ] || options[ options.length - 1 ])
   }
 
@@ -60,6 +64,7 @@ export default function usePickerControls(
   function deleteIfAble() {
     if (active && active.canDelete) {
       deletePattern(active)
+      _focusPreviousInternal()
     }
   }
 

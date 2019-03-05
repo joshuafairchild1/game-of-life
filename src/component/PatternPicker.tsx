@@ -5,8 +5,8 @@ import KeyDownListener from './KeyDownListener'
 import usePickerControls from './hook/usePickerControls'
 import useAppState from '../state/useAppState'
 import useAutoFocusContainer from './hook/useAutoFocusContainer'
+import DeleteForever from '@material-ui/icons/DeleteForever'
 import { useEffect } from 'react'
-import { DeleteForever } from '@material-ui/icons'
 import { stopEvent } from '../utils'
 
 type Props = {

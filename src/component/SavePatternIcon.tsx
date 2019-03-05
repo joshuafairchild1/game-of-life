@@ -1,9 +1,13 @@
 import * as React from 'react'
-import { useState } from 'react'
-import { Close, Save } from '@material-ui/icons'
-import { Button, Card, Input, Modal } from '@material-ui/core'
+import Close from '@material-ui/icons/Close'
+import Save from '@material-ui/icons/Save'
 import Pattern from '../game/Pattern'
+import Button from '@material-ui/core/Button'
+import Card from '@material-ui/core/Card'
+import Input from '@material-ui/core/Input'
+import Modal from '@material-ui/core/Modal'
 import useStateVariable from '../state/useStateVariable'
+import { useState } from 'react'
 
 import './SavePatternIcon.scss'
 
@@ -27,7 +31,8 @@ const SavePatternIcon: React.FC<Props> = props => {
     }
   }
   const isUnique = isUniqueName(patternName)
-  const disabled = !isUnique || !patternName
+  const isValid = patternName.trim() !== ''
+  const disabled = !isUnique || !isValid
   return <>
     <Save className="save-icon"
           titleAccess="Save Pattern"
@@ -49,6 +54,10 @@ const SavePatternIcon: React.FC<Props> = props => {
         {!isUnique &&
         <small className="warn-text">
           A pattern with this name already exists
+        </small>}
+        {!isValid &&
+        <small className="warn-text">
+          Name must not be empty
         </small>}
       </Card>
     </Modal>

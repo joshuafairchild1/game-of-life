@@ -33,3 +33,7 @@ export function stopEvent(event: { stopPropagation: VoidFunction }) {
   event.stopPropagation()
   return true
 }
+
+export function ownKeys<T, K extends keyof T>(thing: T) {
+  return Object.getOwnPropertyNames(thing) as K[]
+}

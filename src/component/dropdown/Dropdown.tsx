@@ -1,6 +1,6 @@
 import * as React from 'react'
+import ArrowDropDown from '@material-ui/icons/ArrowDropDown'
 import { useEffect } from 'react'
-import { ArrowDropDown } from '@material-ui/icons'
 import { stopEvent } from '../../utils'
 
 import './Dropdown.scss'

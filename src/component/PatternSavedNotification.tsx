@@ -1,6 +1,7 @@
 import * as React from 'react'
-import { IconButton, Snackbar } from '@material-ui/core'
-import { Close } from '@material-ui/icons'
+import IconButton from '@material-ui/core/IconButton'
+import Snackbar from '@material-ui/core/Snackbar'
+import Close from '@material-ui/icons/Close'
 import useAppState from '../state/useAppState'
 
 const PatternSavedNotification: React.FC = () => {

@@ -1,4 +1,4 @@
-import { useGlobal } from 'reactn'
+import useGlobalAppState from './useGlobalAppState'
 import {
   StateKey,
   StateVariableSelection,
@@ -6,16 +6,17 @@ import {
   AppStateSetter
 } from './Types'
 import { SetStateAction } from 'react'
+import { ownKeys } from '../utils'
 
 export default function useAppState<K extends StateKey>(...stateKeys: K[]) {
-  const [ state, setAppState ] = useGlobal()
+  const [ state, setAppState ] = useGlobalAppState()
   const selection = {} as StateVariableSelection<K>
   if (stateKeys.length === 0) {
-    stateKeys = Object.getOwnPropertyNames(state) as K[]
+    stateKeys = ownKeys(state)
   }
   for (const key of stateKeys) {
     selection[key] = {
-      get: () => state[ key ],
+      get: () => state[key],
       set: _useStateSetter(key, setAppState)
     }
   }
