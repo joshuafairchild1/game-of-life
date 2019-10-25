@@ -1,8 +1,9 @@
 import * as React from 'react'
 import Input from '@material-ui/core/Input/Input'
-import keyEventHandler, { isNumber } from '../utils'
 import useAppState from '../state/useAppState'
 import CheckCircle from '@material-ui/icons/CheckCircle'
+import Key from '../Key'
+import { handlerFor, isNumber } from '../utils'
 import { useState } from 'react'
 
 import './GenerationInput.scss'
@@ -15,7 +16,7 @@ type Props = {
 const GenerationInput: React.FC<Props> = props => {
   const [ value, setValue ] = useState(props.currentGenerationIndex.toString())
   const { showGenerationInput } = useAppState('showGenerationInput')
-  const handleEscape = keyEventHandler('Escape', () => {
+  const escapeHandler = handlerFor(Key.Escape, () => {
     showGenerationInput.set(false)
     props.onSubmit(props.currentGenerationIndex)
   })
@@ -40,7 +41,7 @@ const GenerationInput: React.FC<Props> = props => {
         <Input type="number" autoFocus
                inputProps={{ min: 0 }}
                value={value}
-               onKeyUp={handleEscape}
+               onKeyUp={escapeHandler.handle}
                onChange={event => setValue(event.target.value)}/>
         <CheckCircle className="icon-check" onClick={finishEdit}/>
       </form>

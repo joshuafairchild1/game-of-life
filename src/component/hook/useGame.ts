@@ -4,9 +4,10 @@ import Pattern from '../../game/Pattern'
 import Direction from '../../Direction'
 import useAppState from '../../state/useAppState'
 import values from '../../state/values'
-import { Rules } from '../../Types'
 import { timed } from '../../utils'
 import { useEffect, useLayoutEffect, useState } from 'react'
+
+export type Rules = (current: Grid) => Grid
 
 export interface Game {
   current: Grid,
@@ -145,7 +146,7 @@ export default function useGame(rules: Rules): Game {
 
   /**
    * this may be called asynchronously, so it's important to use the
-   * ref to get the up-to-date value during (potentially suspended) execution
+   * ref to get the up-to-date value during (potentially async) execution
    * @see {useGenerations}
    */
   function _stepForward() {

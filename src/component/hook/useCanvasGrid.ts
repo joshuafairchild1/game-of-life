@@ -1,9 +1,9 @@
 import CanvasConfig from '../../model/CanvasConfig'
 import Grid from '../../game/Grid'
 import useCanvas from './useCanvas'
+import Coordinate from '../../Coordinate'
 
 import { useLayoutEffect, useRef } from 'react'
-import { Coordinate } from '../../Types'
 
 const BACKGROUND_COLOR = '#eaeaea'
 const HOVER_COLOR = '#a8a8a8'

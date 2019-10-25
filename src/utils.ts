@@ -15,25 +15,33 @@ export function invert(value: number, min: number, max: number) {
   return Math.abs(value - max) + min
 }
 
-export type KeyEvent<T> = KeyboardEvent | React.KeyboardEvent<T>
-
-export default function keyEventHandler<T = {}>(
-  key: string,
-  handler: (event: KeyEvent<T>) => void
-) {
-  return function handleKeyEvent(event: KeyEvent<T>) {
-    if (event.key === key) {
-      event.preventDefault()
-      handler(event)
-    }
-  }
-}
-
-export function stopEvent(event: { stopPropagation: VoidFunction }) {
+export function stopEvent(event: React.SyntheticEvent) {
   event.stopPropagation()
+  event.nativeEvent.stopImmediatePropagation()
   return true
 }
 
 export function ownKeys<T, K extends keyof T>(thing: T) {
   return Object.getOwnPropertyNames(thing) as K[]
+}
+
+export type KeyEvent<T = HTMLElement> = React.KeyboardEvent<T>
+
+export interface KeyEventHandler {
+  keyName: string
+  handle(event: KeyEvent): void
+}
+
+export function handlerFor(
+  keyName: string, handle: (event: KeyEvent) => void
+): KeyEventHandler {
+  return {
+    keyName,
+    handle: (event: KeyEvent) => {
+      if (event.key === keyName) {
+        stopEvent(event)
+        handle(event)
+      }
+    }
+  }
 }

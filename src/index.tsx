@@ -14,7 +14,7 @@ import './global.scss'
 // https://material-ui.com/style/typography/#migration-to-typography-v2
 (window as any).__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true
 
-const GENERATION_INTERVAL = 50
+const GENERATION_INTERVAL = 125
 const LINE_WIDTH = 1
 const DEFAULT_PRIMARY_COLOR = '#1e87f0'
 const config = new CanvasConfig(700, 18, LINE_WIDTH, DEFAULT_PRIMARY_COLOR)

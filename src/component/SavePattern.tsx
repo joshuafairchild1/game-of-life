@@ -7,7 +7,9 @@ import Card from '@material-ui/core/Card'
 import Input from '@material-ui/core/Input'
 import Modal from '@material-ui/core/Modal'
 import useStateVariable from '../state/useStateVariable'
+import KeyDownListener from './KeyDownListener'
 import { useState } from 'react'
+import { handlerFor } from '../utils'
 
 import './SavePatternIcon.scss'
 
@@ -18,31 +20,49 @@ type Props = {
 const isUniqueName = (name: string) =>
   Pattern.known.every(it => it.name !== name)
 
-const SavePatternIcon: React.FC<Props> = props => {
+const SavePattern: React.FC<Props> = props => {
   const [ patternName, setPatternName ] = useState('')
   const showModal = useStateVariable('showSavePatternModal')
   const hideModal = () => showModal.set(false)
-  const handleSubmit = (event: React.SyntheticEvent) => {
-    event.preventDefault()
-    if (patternName && isUniqueName(patternName)) {
-      hideModal()
-      props.onSave(patternName)
-      setPatternName('')
-    }
-  }
   const isUnique = isUniqueName(patternName)
   const isValid = patternName.trim() !== ''
   const disabled = !isUnique || !isValid
-  return <>
+
+  function handleSubmit(event: React.SyntheticEvent) {
+    event.preventDefault()
+    if (patternName && isUniqueName(patternName)) {
+      props.onSave(patternName)
+      closeAndReset()
+    }
+  }
+
+  function closeAndReset() {
+    hideModal()
+    setPatternName('')
+  }
+
+  function selectErrorText() {
+    if (!isUnique) {
+      return 'A pattern with this name already exists'
+    }
+    if (!isValid) {
+      return 'Name must not be empty'
+    }
+    return null
+  }
+
+  const errorText = selectErrorText()
+
+  return <KeyDownListener handlers={[ handlerFor('Escape', closeAndReset) ]}>
     <Save className="save-icon"
           titleAccess="Save Pattern"
           onClick={() => showModal.set(true)}/>
-    <Modal onEscapeKeyDown={hideModal}
+    <Modal onEscapeKeyDown={closeAndReset}
            style={{ textAlign: 'center' }}
            open={showModal.get()}>
       <Card className="save-pattern-dialog">
         <span className="close-icon">
-          <Close onClick={hideModal}/>
+          <Close onClick={closeAndReset}/>
         </span>
         <label>Pattern Name</label>
         <form onSubmit={handleSubmit}>
@@ -51,17 +71,13 @@ const SavePatternIcon: React.FC<Props> = props => {
           <Button disabled={disabled}
                   onClick={handleSubmit}>Save</Button>
         </form>
-        {!isUnique &&
+        {errorText &&
         <small className="warn-text">
-          A pattern with this name already exists
-        </small>}
-        {!isValid &&
-        <small className="warn-text">
-          Name must not be empty
+          {errorText}
         </small>}
       </Card>
     </Modal>
-  </>
+  </KeyDownListener>
 }
 
-export default SavePatternIcon
+export default SavePattern

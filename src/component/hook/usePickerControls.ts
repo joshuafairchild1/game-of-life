@@ -1,13 +1,11 @@
 import Pattern from '../../game/Pattern'
-import { KeyEvent, stopEvent } from '../../utils'
+import Key from '../../Key'
+import { handlerFor, KeyEvent, stopEvent } from '../../utils'
 import { SetStateAction, useState } from 'react'
 
-const keyHandler = (
-  keyName: string, onKeyDown: (event: KeyEvent<HTMLDivElement>) => void
-) => ({ keyName, onKeyDown })
-
 export default function usePickerControls(
-  options: Pattern[], selected: Pattern,
+  options: Pattern[],
+  selected: Pattern,
   onSelected: (pattern: Pattern) => void,
   closePicker: VoidFunction,
   deletePattern: (pattern: Pattern) => void
@@ -40,12 +38,8 @@ export default function usePickerControls(
     }
   }
 
-  function focusPreviousItem(event: KeyEvent<HTMLDivElement>) {
-    stopEvent(event)
-    _focusPreviousInternal()
-  }
-
-  function _focusPreviousInternal() {
+  function focusPreviousItem(event?: KeyEvent<HTMLDivElement>) {
+    event && stopEvent(event)
     setActiveBy(current => options[ current - 1 ] || options[ options.length - 1 ])
   }
 
@@ -64,11 +58,11 @@ export default function usePickerControls(
   function deleteIfAble() {
     if (active && active.canDelete) {
       deletePattern(active)
-      _focusPreviousInternal()
+      focusPreviousItem()
     }
   }
 
-  const deleteHandler = (key: string) => keyHandler(key, deleteIfAble)
+  const handleDelete = (key: string) => handlerFor(key, deleteIfAble)
 
   return {
     activeItem: {
@@ -76,15 +70,15 @@ export default function usePickerControls(
       set: (action: SetStateAction<Pattern>) => setActive(action)
     },
     handlers: [
-      keyHandler('Tab', focusNextItem),
-      keyHandler(' ', selectActiveItem()),
-      keyHandler('Enter', selectActiveItem(true)),
-      keyHandler('Escape', closePicker),
-      keyHandler('ArrowDown', focusNextItem),
-      keyHandler('ArrowUp', focusPreviousItem),
-      deleteHandler('d'),
-      deleteHandler('Backspace'),
-      deleteHandler('Delete')
+      handlerFor(Key.Tab, focusNextItem),
+      handlerFor(Key.Spacebar, selectActiveItem()),
+      handlerFor(Key.Enter, selectActiveItem(true)),
+      handlerFor(Key.Escape, closePicker),
+      handlerFor(Key.ArrowDown, focusNextItem),
+      handlerFor(Key.ArrowUp, focusPreviousItem),
+      handleDelete(Key.Delete),
+      handleDelete(Key.Backspace),
+      handleDelete(Key.D)
     ],
     focusItem
   }

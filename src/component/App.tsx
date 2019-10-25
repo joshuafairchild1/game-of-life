@@ -2,7 +2,7 @@ import * as React from 'react'
 import CanvasGrid from './CanvasGrid'
 import ControlPanel from './ControlPanel'
 import CanvasConfig from '../model/CanvasConfig'
-import useGame from './hook/useGame'
+import useGame, { Rules } from './hook/useGame'
 import Pattern from '../game/Pattern'
 import KeyDownListener from './KeyDownListener'
 import PatternSavedNotification from './PatternSavedNotification'
@@ -10,7 +10,6 @@ import PatternStorage from '../PatternStorage'
 import useAppState from '../state/useAppState'
 import useGlobalHotKeys from './hook/useGlobalHotKeys'
 import useAppContainerFocus from './hook/useAppContainerFocus'
-import { Rules } from '../Types'
 
 type Props = {
   rules: Rules

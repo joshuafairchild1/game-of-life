@@ -1,27 +1,23 @@
 import useAppState from '../../state/useAppState'
+import Key from '../../Key'
 import { Game } from './useGame'
-import { KeyEventHandler } from '../../Types'
+import { handlerFor } from '../../utils'
 
 export default function useGlobalHotKeys(game: Game) {
   const {
-    showSavePatternModal, patternPickerOpen
-  } = useAppState('showSavePatternModal', 'patternPickerOpen')
+    showSavePatternModal, patternPickerOpen, showGenerationInput
+  } = useAppState('showSavePatternModal', 'patternPickerOpen', 'showGenerationInput')
 
-  const setSaveModalOpen = (isOpen: boolean) => {
-    if (isOpen) {
-      game.pause()
-    }
-    showSavePatternModal.set(isOpen)
+  const openSaveModal = () => {
+    game.pause()
+    showSavePatternModal.set(true)
   }
 
-  return <KeyEventHandler<HTMLDivElement>[]>[{
-    keyName: 's',
-    onKeyDown: () => setSaveModalOpen(true)
-  }, {
-    keyName: ' ',
-    onKeyDown: game.togglePlaying
-  }, {
-    keyName: 'p',
-    onKeyDown: () => patternPickerOpen.set(isOpen => !isOpen)
-  }]
+  return [
+    handlerFor(Key.G, () => showGenerationInput.set(isOpen => !isOpen)),
+    handlerFor(Key.P, () => patternPickerOpen.set(isOpen => !isOpen)),
+    handlerFor(Key.R, event => !event.metaKey && game.reset()),
+    handlerFor(Key.S, openSaveModal),
+    handlerFor(Key.Spacebar, game.togglePlaying)
+  ]
 }

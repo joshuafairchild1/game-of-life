@@ -10,6 +10,6 @@ export default function useAutoFocusContainer(
       && document.activeElement !== container.current) {
         container.current.focus()
     }
-  }, inputs)
+  }, [ shouldFocus, ...inputs ])
   return container
 }

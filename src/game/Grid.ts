@@ -1,7 +1,7 @@
 import Cell, { isAlive } from './model/Cell'
 import Pattern from './Pattern'
 import Status from './Status'
-import { Coordinate } from '../Types'
+import Coordinate from '../Coordinate'
 
 /**
  *  (0, 0), (1, 0), (2, 0), (3, 0) ...

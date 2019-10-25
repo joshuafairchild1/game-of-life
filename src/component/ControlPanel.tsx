@@ -6,7 +6,7 @@ import Card from '@material-ui/core/Card/Card'
 import GenerationInput from './GenerationInput'
 import Slider from '@material-ui/lab/Slider/Slider'
 import ColorPicker from './ColorPicker'
-import SavePatternIcon from './SavePatternIcon'
+import SavePattern from './SavePattern'
 import useAppState from '../state/useAppState'
 import PatternStorage from '../PatternStorage'
 import usePatterns from './hook/usePatterns'
@@ -111,7 +111,7 @@ const ControlPanel: React.FC<Props> = props => {
     {/*</div>*/}
     <div className="lower-controls-container">
       <ColorPicker/>
-      <SavePatternIcon onSave={savePattern}/>
+      <SavePattern onSave={savePattern}/>
     </div>
   </Card>
 }
